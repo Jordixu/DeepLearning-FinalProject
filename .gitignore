@@ -1,0 +1,45 @@
+# Data — never commit raw images or large CSVs
+data/combine_asl_dataset/
+data/ASL_HG_36000/
+data/asl-alphabet/
+data/manifest_raw.csv
+data/dedup_report.json
+data/splits/
+
+# Generated outputs
+results/
+checkpoints/
+
+# MediaPipe & resize cache
+results/mediapipe_cache/
+results/resize_cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.so
+*.pyd
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
