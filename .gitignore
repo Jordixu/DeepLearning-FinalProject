@@ -1,18 +1,12 @@
 # Data — never commit raw images or large CSVs
+data/ASL-HG American Sign Language Hand Gesture Image D/
 data/combine_asl_dataset/
-data/ASL_HG_36000/
-data/asl-alphabet/
+data/archive (2)
 data/manifest_raw.csv
-data/dedup_report.json
-data/splits/
 
 # Generated outputs
 results/
 checkpoints/
-
-# MediaPipe & resize cache
-results/mediapipe_cache/
-results/resize_cache/
 
 # Python
 __pycache__/
