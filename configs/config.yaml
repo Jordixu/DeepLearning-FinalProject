@@ -1,0 +1,261 @@
+active_env: local   # override with ASL_ENV env var: local | colab | kaggle
+
+# ---------------------------------------------------------------------------
+# Paths per execution environment
+# ---------------------------------------------------------------------------
+# After running reorganize.py locally, upload data/asl_clean/ as a single
+# dataset to Kaggle / Google Drive.  All environments then point at asl_clean/.
+paths:
+  local:
+    data_root: data/
+    results_root: results/
+    checkpoints_root: checkpoints/
+  colab:
+    # Mount your Drive, then set data_root to wherever asl_clean/ lives.
+    data_root: /content/drive/MyDrive/asl/
+    results_root: /content/drive/MyDrive/asl/results/
+    checkpoints_root: /content/drive/MyDrive/asl/checkpoints/
+  kaggle:
+    # Upload the repo + asl_clean/ as separate Kaggle datasets (see README).
+    # asl_clean/ is read-only under /kaggle/input/; results go to /kaggle/working/.
+    data_root: /kaggle/input/asl-clean-data/    # <- UPDATE after upload
+    results_root: /kaggle/working/results/
+    checkpoints_root: /kaggle/working/checkpoints/
+
+# ---------------------------------------------------------------------------
+# Raw dataset locations (local only - used by data_unification.py and
+# reorganize.py; not needed on Kaggle/Colab after asl_clean/ is uploaded).
+# Paths are relative to paths.local.data_root.
+# ---------------------------------------------------------------------------
+raw_datasets:
+  combine_asl: "combine_asl_dataset/"
+  asl_hg_raw: "ASL-HG American Sign Language Hand Gesture Image D/ASL-HG American Sign Language Hand Gesture Image D/ASL_HG_36000/ASL_Raw_Images/asl_dataset/"
+  asl_alphabet: "archive (2)/asl_alphabet_train/asl_alphabet_train/"
+
+# ---------------------------------------------------------------------------
+# Clean dataset (after reorganize.py runs)
+# Path is relative to the active data_root.
+# Layout: asl_clean/{split}/{class_name}/{image_file}
+# ---------------------------------------------------------------------------
+clean_dir: asl_clean/
+
+# ---------------------------------------------------------------------------
+# Canonical label space: 37 classes (0-9, A-Z, nothing)
+# ---------------------------------------------------------------------------
+classes:
+  - "0"
+  - "1"
+  - "2"
+  - "3"
+  - "4"
+  - "5"
+  - "6"
+  - "7"
+  - "8"
+  - "9"
+  - "A"
+  - "B"
+  - "C"
+  - "D"
+  - "E"
+  - "F"
+  - "G"
+  - "H"
+  - "I"
+  - "J"
+  - "K"
+  - "L"
+  - "M"
+  - "N"
+  - "O"
+  - "P"
+  - "Q"
+  - "R"
+  - "S"
+  - "T"
+  - "U"
+  - "V"
+  - "W"
+  - "X"
+  - "Y"
+  - "Z"
+  - "nothing"
+
+# Per-dataset folder-name -> canonical class name.
+# Folders NOT listed are skipped (e.g. del, space in asl_alphabet).
+class_maps:
+  combine_asl:
+    # combine_asl uses lowercase letters, digit strings for numbers
+    "0": "0"
+    "1": "1"
+    "2": "2"
+    "3": "3"
+    "4": "4"
+    "5": "5"
+    "6": "6"
+    "7": "7"
+    "8": "8"
+    "9": "9"
+    "a": "A"
+    "b": "B"
+    "c": "C"
+    "d": "D"
+    "e": "E"
+    "f": "F"
+    "g": "G"
+    "h": "H"
+    "i": "I"
+    "j": "J"
+    "k": "K"
+    "l": "L"
+    "m": "M"
+    "n": "N"
+    "o": "O"
+    "p": "P"
+    "q": "Q"
+    "r": "R"
+    "s": "S"
+    "t": "T"
+    "u": "U"
+    "v": "V"
+    "w": "W"
+    "x": "X"
+    "y": "Y"
+    "z": "Z"
+  asl_hg_raw:
+    # ASL-HG uses uppercase letters and digit strings
+    "0": "0"
+    "1": "1"
+    "2": "2"
+    "3": "3"
+    "4": "4"
+    "5": "5"
+    "6": "6"
+    "7": "7"
+    "8": "8"
+    "9": "9"
+    "A": "A"
+    "B": "B"
+    "C": "C"
+    "D": "D"
+    "E": "E"
+    "F": "F"
+    "G": "G"
+    "H": "H"
+    "I": "I"
+    "J": "J"
+    "K": "K"
+    "L": "L"
+    "M": "M"
+    "N": "N"
+    "O": "O"
+    "P": "P"
+    "Q": "Q"
+    "R": "R"
+    "S": "S"
+    "T": "T"
+    "U": "U"
+    "V": "V"
+    "W": "W"
+    "X": "X"
+    "Y": "Y"
+    "Z": "Z"
+  asl_alphabet:
+    # ASL Alphabet uses uppercase letters. del and space are NOT listed -> skipped.
+    "A": "A"
+    "B": "B"
+    "C": "C"
+    "D": "D"
+    "E": "E"
+    "F": "F"
+    "G": "G"
+    "H": "H"
+    "I": "I"
+    "J": "J"
+    "K": "K"
+    "L": "L"
+    "M": "M"
+    "N": "N"
+    "O": "O"
+    "P": "P"
+    "Q": "Q"
+    "R": "R"
+    "S": "S"
+    "T": "T"
+    "U": "U"
+    "V": "V"
+    "W": "W"
+    "X": "X"
+    "Y": "Y"
+    "Z": "Z"
+    "nothing": "nothing"
+
+# ---------------------------------------------------------------------------
+# Preprocessing
+# ---------------------------------------------------------------------------
+preprocessing:
+  # All images are resized to image_size x image_size on-the-fly during training
+  # (via T.Resize in augmentation.py).  The original sizes per dataset are:
+  #   combine_asl:  400x400 px (enforced by cleanup scripts)
+  #   asl_hg_raw:   variable  (raw capture, different devices)
+  #   asl_alphabet: 200x200 px (after thinning via delete_archive_train.py)
+  image_size: 224
+  min_image_size: 32     # drop images smaller than this (px, either dim)
+  phash_threshold: 5     # Hamming distance <= this -> near-duplicate
+  phash_hash_size: 8     # 64-bit pHash
+  split_ratios:
+    train: 0.70
+    val: 0.15
+    test: 0.15
+  random_seed: 33
+  cache_resized: false   # enable on Colab to cache pre-resized images locally
+
+# ---------------------------------------------------------------------------
+# DataLoader
+# ---------------------------------------------------------------------------
+dataloader:
+  local:
+    batch_size: 64
+    num_workers: 4
+    prefetch_factor: 2
+    persistent_workers: true
+    pin_memory: true
+  colab:
+    batch_size: 128
+    num_workers: 2
+    prefetch_factor: 2
+    persistent_workers: true
+    pin_memory: true
+  kaggle:
+    batch_size: 128
+    num_workers: 2
+    prefetch_factor: 2
+    persistent_workers: true
+    pin_memory: true
+
+# ---------------------------------------------------------------------------
+# Training
+# ---------------------------------------------------------------------------
+training:
+  num_epochs: 30
+  learning_rate: 1.0e-3
+  weight_decay: 1.0e-4
+  grad_clip: 1.0
+  grad_accum_steps: 1
+  early_stopping_patience: 7
+  use_amp: true
+  use_weighted_sampler: false
+  use_class_weights: true
+  scheduler: cosine      # cosine | step | none
+  torch_compile: false
+
+# ---------------------------------------------------------------------------
+# Transfer learning
+# ---------------------------------------------------------------------------
+transfer:
+  freeze_epochs: 5
+  backbones:
+    - resnet18
+    - resnet50
+    - mobilenet_v3_small
+    - efficientnet_b0
