@@ -3,6 +3,7 @@ data/ASL-HG American Sign Language Hand Gesture Image D/
 data/combine_asl_dataset/
 data/archive (2)
 data/manifest_raw.csv
+data/asl_clean
 
 # Generated outputs
 results/
