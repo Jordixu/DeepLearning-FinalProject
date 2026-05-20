@@ -14,6 +14,8 @@ import numpy as np
 import seaborn as sns
 import torch
 import torch.nn as nn
+import os
+import subprocess
 from sklearn.metrics import (
     balanced_accuracy_score,
     classification_report,
@@ -185,3 +187,23 @@ def save_history(history: dict, path: str) -> None:
 def load_history(path: str) -> dict:
     with open(path) as f:
         return json.load(f)
+
+
+# Cloud/bootstrap helper for notebooks (Colab / Kaggle)
+def bootstrap_cloud(ensure_packages: list | None = None) -> None:
+    """Detect Colab/Kaggle and install minimal packages + adjust sys.path.
+
+    Call this from notebooks before importing project modules when running
+    on hosted runtimes.
+    """
+    if ensure_packages is None:
+        ensure_packages = ["pyyaml"]
+    if "KAGGLE_URL_BASE" in os.environ or "COLAB_GPU" in os.environ:
+        os.environ["ASL_ENV"] = "kaggle"
+        for pkg in ensure_packages:
+            try:
+                __import__(pkg)
+            except Exception:
+                subprocess.run([sys.executable, "-m", "pip", "install", pkg], check=True)
+        # Kaggle dataset mount path convention
+        sys.path.insert(0, "/kaggle/input/asl-repo/src")
