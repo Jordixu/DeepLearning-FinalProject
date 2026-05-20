@@ -1,0 +1,1 @@
+- We should decrease the threshold for the phashes. I am seeing very similar images still.
