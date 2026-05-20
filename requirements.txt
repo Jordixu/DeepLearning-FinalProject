@@ -26,3 +26,4 @@ opencv-python>=4.8.0
 # Notebook
 ipykernel>=6.0.0
 ipywidgets>=8.0.0
+webdataset>=0.3.0

@@ -104,6 +104,7 @@ class Config:
     results_root: pathlib.Path
     checkpoints_root: pathlib.Path
     clean_dir: pathlib.Path           # <data_root>/asl_clean/
+    shards_dir: pathlib.Path          # <data_root>/asl_shards/
     splits_dir: pathlib.Path          # <data_root>/splits/
     # Raw dataset paths - only valid locally (used by data_unification + reorganize)
     raw_dataset_paths: Dict[str, pathlib.Path]
@@ -119,8 +120,26 @@ class Config:
 
 def load_config(config_path: str = "configs/config.yaml") -> Config:
     config_path = pathlib.Path(config_path)
-    with open(config_path) as f:
-        raw = yaml.safe_load(f)
+    # Read as bytes and attempt several decodings to avoid UnicodeDecodeError
+    with open(config_path, "rb") as f:
+        content_bytes = f.read()
+
+    raw = None
+    for enc in ("utf-8", "utf-8-sig", "cp1252", "latin-1"):
+        try:
+            text = content_bytes.decode(enc)
+            raw = yaml.safe_load(text)
+            break
+        except UnicodeDecodeError:
+            continue
+        except yaml.YAMLError:
+            # If YAML parsing fails for a given decoding, re-raise with context
+            raise
+
+    if raw is None:
+        # Last-resort: decode with replacement to preserve content and surface parsing errors
+        text = content_bytes.decode("utf-8", errors="replace")
+        raw = yaml.safe_load(text)
 
     active_env = detect_env()
     print(f"[config] environment: {active_env}")
@@ -131,6 +150,7 @@ def load_config(config_path: str = "configs/config.yaml") -> Config:
     checkpoints_root = pathlib.Path(path_block["checkpoints_root"])
 
     clean_dir = data_root / raw.get("clean_dir", "asl_clean/")
+    shards_dir = data_root / raw.get("shards_dir", "asl_shards/")
     splits_dir = data_root / "splits"
 
     # Raw dataset paths - local only
@@ -194,6 +214,7 @@ def load_config(config_path: str = "configs/config.yaml") -> Config:
         results_root=results_root,
         checkpoints_root=checkpoints_root,
         clean_dir=clean_dir,
+        shards_dir=shards_dir,
         splits_dir=splits_dir,
         raw_dataset_paths=raw_dataset_paths,
         classes=classes,

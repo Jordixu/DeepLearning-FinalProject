@@ -36,8 +36,8 @@ raw_datasets:
   asl_hg_raw: "ASL-HG American Sign Language Hand Gesture Image D/ASL-HG American Sign Language Hand Gesture Image D/ASL_HG_36000/ASL_Raw_Images/asl_dataset/"
   asl_alphabet: "archive (2)/asl_alphabet_train/asl_alphabet_train/"
 
-# clean dataset directory
-clean_dir: asl_clean/
+# WebDataset tar shards (produced by reorganize.py)
+shards_dir: asl_clean/
 
 # Labels
 classes:
@@ -199,6 +199,7 @@ preprocessing:
   min_image_size: 32     # drop images smaller than this (px, either dim)
   phash_threshold: 5     # Hamming distance <= this -> near-duplicate
   phash_hash_size: 8     # 64-bit pHash
+  shard_size: 1000       # images per tar shard (used by reorganize.py)
   split_ratios:
     train: 0.70
     val: 0.15

@@ -1,56 +1,166 @@
 """
-Manifest-CSV-driven PyTorch Dataset for ASL classification.
+WebDataset-based DataLoaders for ASL classification.
 
-Reads split CSVs produced by preprocessing.py (then rewritten by reorganize.py).
+Primary entry point: build_dataloaders(shards_dir, ...)
+  Reads tar shards produced by reorganize.py from:
+      shards_dir/{train,val,test}/*.tar
+      shards_dir/{train,val,test}/_info.json
 
-After reorganize.py, filepaths in the CSV are RELATIVE to data_root.
-Pass data_root so the dataset can resolve them correctly on any machine.
-Absolute paths are used as-is (backward compatible with pre-reorganize CSVs).
+ASLDataset is kept for EDA / offline inspection (reads split CSVs directly).
 
-Segmentation modes:
-  - "none": load image as-is
-  - "mediapipe_crop": apply MediaPipeHandCropper on-the-fly (with caching)
-
-The CSV must have at minimum these columns:
-  filepath, class_id, class_name, source_dataset, original_split
+Shard format (per sample inside each tar):
+    {key}.jpg   -- JPEG image
+    {key}.cls   -- class_id as ASCII bytes (e.g. b"5")
 """
 
 import hashlib
+import json
 import pathlib
-from typing import Callable, Dict, List, Literal, Optional, Tuple
+from typing import Callable, Dict, List, Literal, Optional, Tuple, Union
 
 import pandas as pd
+import torch
+import webdataset as wds
 from PIL import Image
-from torch.utils.data import Dataset
+from torch.utils.data import DataLoader, Dataset
 
 
 SegMode = Literal["none", "mediapipe_crop"]
 
 
+# ---------------------------------------------------------------------------
+# Shard metadata helper
+# ---------------------------------------------------------------------------
+
+def load_shard_info(split_dir: Union[str, pathlib.Path]) -> dict:
+    """Load _info.json from a split shard directory."""
+    info_path = pathlib.Path(split_dir) / "_info.json"
+    with open(info_path) as f:
+        return json.load(f)
+
+
+# ---------------------------------------------------------------------------
+# WebDataset loader (primary training path)
+# ---------------------------------------------------------------------------
+
+def _decode_cls(raw) -> int:
+    if isinstance(raw, bytes):
+        return int(raw.decode("ascii").strip())
+    return int(str(raw).strip())
+
+
+def _build_split_loader(
+    split_dir: pathlib.Path,
+    transform: Callable,
+    batch_size: int,
+    num_workers: int,
+    pin_memory: bool,
+    prefetch_factor: int,
+    persistent_workers: bool,
+    shuffle: bool,
+    drop_last: bool,
+) -> DataLoader:
+    info = load_shard_info(split_dir)
+    shard_paths = [str(split_dir / s) for s in info["shards"]]
+    total = info["total"]
+
+    dataset = (
+        wds.WebDataset(shard_paths, shardshuffle=500 if shuffle else False,
+                       nodesplitter=wds.split_by_node)
+        .shuffle(1000 if shuffle else 0)
+        .decode("pil")
+        .to_tuple("jpg", "cls")
+        .map_tuple(transform, _decode_cls)
+    )
+
+    n_batches = total // batch_size if drop_last else (total + batch_size - 1) // batch_size
+
+    pw = persistent_workers and num_workers > 0
+    pf = prefetch_factor if num_workers > 0 else None
+
+    loader = wds.WebLoader(
+        dataset,
+        batch_size=batch_size,
+        num_workers=num_workers,
+        pin_memory=pin_memory,
+        persistent_workers=pw,
+        prefetch_factor=pf,
+        drop_last=drop_last,
+    ).with_length(n_batches)
+
+    return loader
+
+
+def build_dataloaders(
+    shards_dir: Union[str, pathlib.Path],
+    train_transform: Callable,
+    eval_transform: Callable,
+    batch_size: int = 64,
+    num_workers: int = 4,
+    pin_memory: bool = True,
+    persistent_workers: bool = True,
+    prefetch_factor: int = 2,
+    use_weighted_sampler: bool = False,
+) -> Tuple[DataLoader, DataLoader, DataLoader]:
+    """
+    Build train / val / test DataLoaders from WebDataset tar shards.
+
+    Args:
+        shards_dir: Path to the shards root (contains train/, val/, test/).
+        train_transform: Transform applied to training images.
+        eval_transform: Transform applied to val/test images.
+        use_weighted_sampler: Not supported with WebDataset (IterableDataset).
+            Use use_class_weights=True in the Trainer for weighted loss instead.
+    """
+    if use_weighted_sampler:
+        import warnings
+        warnings.warn(
+            "use_weighted_sampler is not supported with WebDataset shards. "
+            "Use use_class_weights=True in the Trainer for class-weighted loss instead.",
+            UserWarning,
+        )
+
+    shards_dir = pathlib.Path(shards_dir)
+
+    train_loader = _build_split_loader(
+        shards_dir / "train", train_transform, batch_size, num_workers,
+        pin_memory, prefetch_factor, persistent_workers,
+        shuffle=True, drop_last=True,
+    )
+    val_loader = _build_split_loader(
+        shards_dir / "val", eval_transform, batch_size, num_workers,
+        pin_memory, prefetch_factor, persistent_workers,
+        shuffle=False, drop_last=False,
+    )
+    test_loader = _build_split_loader(
+        shards_dir / "test", eval_transform, batch_size, num_workers,
+        pin_memory, prefetch_factor, persistent_workers,
+        shuffle=False, drop_last=False,
+    )
+
+    return train_loader, val_loader, test_loader
+
+
+# ---------------------------------------------------------------------------
+# CSV-based dataset (EDA / offline inspection only)
+# ---------------------------------------------------------------------------
+
 class ASLDataset(Dataset):
+    """
+    CSV-based dataset for EDA and offline inspection.
+    Not used during training (use build_dataloaders + shards instead).
+    """
+
     def __init__(
         self,
-        manifest_csv: str | pathlib.Path,
+        manifest_csv: Union[str, pathlib.Path],
         transform: Optional[Callable] = None,
         segmentation_mode: SegMode = "none",
-        data_root: Optional[str | pathlib.Path] = None,
-        cache_dir: Optional[str | pathlib.Path] = None,
+        data_root: Optional[Union[str, pathlib.Path]] = None,
+        cache_dir: Optional[Union[str, pathlib.Path]] = None,
         cache_resized: bool = False,
         image_size: int = 224,
     ):
-        """
-        Args:
-            manifest_csv: Path to a split CSV (train.csv / val.csv / test.csv).
-            transform: torchvision transform applied after loading / cropping.
-            segmentation_mode: "none" or "mediapipe_crop".
-            data_root: Root used to resolve relative filepaths in the CSV.
-                       After reorganize.py, paths are relative to data_root.
-                       Absolute paths in the CSV are used as-is.
-            cache_dir: Directory for MediaPipe crop cache and resize cache.
-            cache_resized: Cache 224×224 resized images on first access.
-                           Big win on Colab with slow Drive I/O.
-            image_size: Target size (square) for the resize cache.
-        """
         self.df = pd.read_csv(manifest_csv)
         self.transform = transform
         self.segmentation_mode = segmentation_mode
@@ -58,8 +168,7 @@ class ASLDataset(Dataset):
         self.cache_dir = pathlib.Path(cache_dir) if cache_dir else None
         self.cache_resized = cache_resized
         self.image_size = image_size
-
-        self._cropper = None  # lazy-loaded MediaPipeHandCropper
+        self._cropper = None
 
         if cache_dir:
             self.cache_dir.mkdir(parents=True, exist_ok=True)
@@ -81,8 +190,6 @@ class ASLDataset(Dataset):
             img = self.transform(img)
 
         return img, class_id
-
-    # helpers
 
     def _resolve(self, raw_path: str) -> pathlib.Path:
         p = pathlib.Path(raw_path)
@@ -131,11 +238,12 @@ class ASLDataset(Dataset):
         key = hashlib.md5(str(filepath).encode()).hexdigest()
         return self.cache_dir / "mediapipe_cache" / f"{key}.jpg"
 
-    # properties for EDA and utils
-
     @property
     def class_names(self) -> List[str]:
-        return sorted(self.df["class_name"].unique(), key=lambda c: self.df.loc[self.df["class_name"] == c, "class_id"].iloc[0])
+        return sorted(
+            self.df["class_name"].unique(),
+            key=lambda c: self.df.loc[self.df["class_name"] == c, "class_id"].iloc[0],
+        )
 
     @property
     def class_counts(self) -> Dict[str, int]:
@@ -144,83 +252,3 @@ class ASLDataset(Dataset):
     @property
     def class_ids(self) -> List[int]:
         return self.df["class_id"].tolist()
-
-
-def build_dataloaders(
-    train_csv: str,
-    val_csv: str,
-    test_csv: str,
-    train_transform,
-    eval_transform,
-    data_root: Optional[str] = None,
-    batch_size: int = 64,
-    num_workers: int = 4,
-    pin_memory: bool = True,
-    persistent_workers: bool = True,
-    prefetch_factor: int = 2,
-    segmentation_mode: SegMode = "none",
-    cache_dir: Optional[str] = None,
-    cache_resized: bool = False,
-    image_size: int = 224,
-    use_weighted_sampler: bool = False,
-):
-    """
-    Build train / val / test DataLoaders from manifest CSVs.
-
-    On Windows, DataLoaders with num_workers > 0 must be created inside
-    a main() or __name__ == '__main__' guard to avoid spawn issues.
-    This function is safe to call from a notebook or a guarded main().
-    """
-    import torch
-    from torch.utils.data import DataLoader, WeightedRandomSampler
-
-    train_ds = ASLDataset(train_csv, train_transform, segmentation_mode, data_root, cache_dir, cache_resized, image_size)
-    val_ds = ASLDataset(val_csv, eval_transform, segmentation_mode, data_root, cache_dir, False, image_size)
-    test_ds = ASLDataset(test_csv, eval_transform, segmentation_mode, data_root, cache_dir, False, image_size)
-
-    sampler = None
-    shuffle_train = True
-    if use_weighted_sampler:
-        counts = train_ds.df["class_id"].value_counts().sort_index()
-        weights_per_class = 1.0 / counts.values
-        sample_weights = torch.tensor(
-            [weights_per_class[cid] for cid in train_ds.df["class_id"]], dtype=torch.float
-        )
-        sampler = WeightedRandomSampler(sample_weights, num_samples=len(sample_weights), replacement=True)
-        shuffle_train = False
-
-    # persistent_workers requires num_workers > 0
-    pw = persistent_workers and num_workers > 0
-    pf = prefetch_factor if num_workers > 0 else None
-
-    train_loader = DataLoader(
-        train_ds,
-        batch_size=batch_size,
-        shuffle=shuffle_train,
-        sampler=sampler,
-        num_workers=num_workers,
-        pin_memory=pin_memory,
-        persistent_workers=pw,
-        prefetch_factor=pf,
-        drop_last=True,
-    )
-    val_loader = DataLoader(
-        val_ds,
-        batch_size=batch_size,
-        shuffle=False,
-        num_workers=num_workers,
-        pin_memory=pin_memory,
-        persistent_workers=pw,
-        prefetch_factor=pf,
-    )
-    test_loader = DataLoader(
-        test_ds,
-        batch_size=batch_size,
-        shuffle=False,
-        num_workers=num_workers,
-        pin_memory=pin_memory,
-        persistent_workers=pw,
-        prefetch_factor=pf,
-    )
-
-    return train_loader, val_loader, test_loader

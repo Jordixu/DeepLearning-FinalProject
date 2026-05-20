@@ -223,11 +223,30 @@ class Trainer:
 
 # Compute class weights for imbalanced loss
 
-def compute_class_weights(train_csv: str | pathlib.Path, num_classes: int) -> torch.Tensor:
-    df = pd.read_csv(train_csv)
+def compute_class_weights(source: str | pathlib.Path, num_classes: int) -> torch.Tensor:
+    """
+    Compute inverse-frequency class weights from a shard directory or a CSV.
+
+    Args:
+        source: Path to a split shard directory (contains _info.json) OR a
+                train.csv file. Shard directories are preferred.
+        num_classes: Total number of classes.
+    """
+    import json as _json
+    source = pathlib.Path(source)
     counts = np.zeros(num_classes, dtype=np.float32)
-    for cid, cnt in df["class_id"].value_counts().items():
-        counts[int(cid)] = cnt
-    counts = np.where(counts == 0, 1, counts)  # avoid div-by-zero for missing classes
+
+    if source.is_dir():
+        info_path = source / "_info.json"
+        with open(info_path) as f:
+            info = _json.load(f)
+        for cid_str, cnt in info["class_counts"].items():
+            counts[int(cid_str)] = cnt
+    else:
+        df = pd.read_csv(source)
+        for cid, cnt in df["class_id"].value_counts().items():
+            counts[int(cid)] = cnt
+
+    counts = np.where(counts == 0, 1, counts)
     weights = counts.sum() / (num_classes * counts)
     return torch.tensor(weights, dtype=torch.float32)
