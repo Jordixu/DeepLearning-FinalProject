@@ -4,6 +4,7 @@ data/combine_asl_dataset/
 data/archive (2)
 data/manifest_raw.csv
 data/asl_clean
+data/asl_clean.zip
 
 # Generated outputs
 results/
