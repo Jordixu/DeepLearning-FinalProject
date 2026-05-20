@@ -1,78 +1,108 @@
-# Dataset descriptions
+# Dataset Descriptions
 
-> [!NOTE] The information contained here are extracted from the original webs.
+> [!NOTE] Information extracted from the original dataset sources.
 
-## ASL Hand Signs Dataset
+---
 
-Link: [https://www.kaggle.com/datasets/vignonantoine/combinedasldatasets?select=combine_asl_dataset]
+## 1. Combined ASL Dataset
 
-This dataset contains images representing American Sign Language (ASL) hand signs for numbers (0–9) and letters (A–Z). Each image is a labeled representation of an individual ASL sign, providing a valuable resource for building machine-learning models related to gesture recognition and sign language translation.
+**Source:** [Kaggle - vignonantoine/combinedasldatasets](https://www.kaggle.com/datasets/vignonantoine/combinedasldatasets?select=combine_asl_dataset)
 
-Features:
+**Local folder:** `combine_asl_dataset/`
 
-- Categories: 36 classes (26 letters + 10 numbers).
-- Image Data: Consistent resolution across all samples, with a uniform background for better preprocessing.
-- Applications:
-  - Gesture recognition systems.
-  - Sign language translation tools.
-  - Human-computer interaction models.
+**Contents:** ASL hand signs for numbers (0–9) and letters (A–Z). Images are 400×400 px JPEG with a uniform background. Data includes augmented and cropped frames from source videos.
 
-Format: Images are organized by labels, with corresponding annotations for each class.
+**Class folders:** `0–9` (digit strings), `a–z` (lowercase letters) → mapped to canonical uppercase in the pipeline.
 
-This dataset is ideal for practicing computer vision techniques like classification, feature extraction, and model evaluation.
+### Images excluded
 
-### About the directory
+Four cleanup scripts were run to remove non-400×400 images before the dataset was committed to this repo:
 
-The dataset is organized into folders, with each folder representing a specific class (e.g., 0, 1, A, B, etc.).
-Each folder contains multiple 400x400 pixel image files corresponding to that class.
-File names are unique and consistent within their respective folders for easy identification and traceability.
+| Script | Method | Effect |
+|---|---|---|
+| `run_cleanup_400.py` | PIL `Image.open` | Deletes any file not exactly 400×400 px |
+| `run_cleanup_cv2.py` | OpenCV `imread` | Same check via OpenCV (alternative runner) |
+| `run_cleanup_headers.py` | Binary header parsing (no full decode) | Faster; supports JPEG, PNG, GIF, BMP, WEBP |
+| `run_cleanup_timeout.py` | Header parsing + `ProcessPoolExecutor` | Handles stalled files with 2 s timeout |
 
-> [!NOTE] The dataset contains augmented data (specifically, cropped pictures).
+All four scripts apply the same rule: **keep only if `(width, height) == (400, 400)`**. Corrupted or unreadable files are also deleted.
 
+**Result:** The dataset contains only valid 400×400 JPEG images. Any image that was not exactly this size (e.g. uncroppable frames, thumbnails, non-image files) has been permanently removed.
 
-## ASL-HG: American Sign Language Hand Gesture Image Dataset
+---
 
-Link: [https://data.mendeley.com/datasets/j4y5w2c8w9/1]
+## 2. ASL-HG: American Sign Language Hand Gesture Image Dataset
 
-This dataset provides a comprehensive collection of American Sign Language (ASL) hand gesture images designed to support research in gesture recognition, computer vision, deep learning, and assistive communication technologies. The dataset consists of 36,000 high-resolution JPG images across 36 ASL classes, covering the full English alphabet (A–Z) and digits (0–9).
+**Source:** [Mendeley Data - j4y5w2c8w9/1](https://data.mendeley.com/datasets/j4y5w2c8w9/1)
 
-Data were collected from 10 volunteers in Mirpur, Dhaka, Bangladesh during May–June 2025. Each participant contributed 100 images per class, producing a balanced dataset of 1,000 images for each gesture category. Images were captured using smartphone HD cameras in both indoor and outdoor environments to ensure diversity in lighting, backgrounds, skin tones, and hand orientations.
+**Local folder:** `ASL-HG American Sign Language Hand Gesture Image D/ASL-HG American Sign Language Hand Gesture Image D/ASL_HG_36000/`
 
-To avoid class confusion between the visually similar gestures for the letter “O” and the digit “0”, the dataset explicitly includes the standard two-handed ASL sign for “zero,” which is commonly used in real-world alphanumeric communication. This distinction supports more accurate gesture-based recognition across alphabetic and numeric classes.
+**Contents:** 36,000 high-resolution JPG images across 36 ASL classes (A–Z + 0–9). Collected from 10 volunteers in indoor and outdoor environments. Originally 1,000 images per class.
 
-With its balanced distribution, high quality, and dual-format availability (raw + processed), this dataset stands as a state-of-the-art ASL gesture resource. It is suitable for research in sign language recognition, assistive technology, human–computer interaction, gesture-controlled systems, and pattern recognition benchmarking.
+**Variants:**
+- `ASL_Raw_Images/asl_dataset/` - original unprocessed images; flat class-folder layout
+- `ASL_Processed_Images/asl_processed/` - MediaPipe-segmented, pre-made 80/20 train/test split (**not used in this project**)
 
-### About the directory
+**Only the raw variant is used.** The processed variant is excluded because we run our own unified split (group-aware, dedup-aware) across all three datasets.
 
-The dataset is provided under the root directory “ASL_HG_36000”, which contains two separate ZIP files:
+### Images excluded - `delete_asl_files.py`
 
-ASL_Raw_Images.zip
+The script `delete_asl_files.py` was run on `ASL_Raw_Images/` to thin out near-sequential frames.
 
-1. Contains the original unprocessed gesture images.
+**Keep rule:** retain file if its trailing index `n` satisfies  
+`n % 50 == 0` **or** `n % 100 == 1`
 
-2. Preserves natural variations in lighting, background, angle, and hand shape.
+From a source range of 1–1,000, this keeps indices:  
+`1, 50, 100, 101, 150, 200, 201, 250, 300, 301, 350, 400, 401, 450, 500, 501, 550, 600, 601, 650, 700, 701, 750, 800, 801, 850, 900, 901, 950, 1000`  
+→ **30 images retained per class** (970 deleted per class).
 
-ASL_Processed_Images.zip
+**Rationale:** Sequential video frames are near-identical; keeping all of them would inflate training set size without adding diversity and would cause leakage if frames from the same shot ended up in both train and test.
 
-1. Includes MediaPipe-segmented hand regions with clean backgrounds.
+---
 
-2. Organized into predefined train–test splits (80% training, 20% testing).
+## 3. ASL Alphabet
 
-3. Provides standardized images suitable for direct model training.
+**Source:** [Kaggle - grassknoted/asl-alphabet](https://www.kaggle.com/datasets/grassknoted/asl-alphabet/data?select=asl_alphabet_train)
 
-Each ZIP file contains 36 subfolders representing the 36 gesture classes, making the dataset well-structured and easy to integrate into computer vision pipelines.
+**Local folder:** `archive (2)/asl_alphabet_train/asl_alphabet_train/`
 
-## ASL Alphabet
+**Contents:** 87,000 images of ASL alphabet hand signs, 200×200 px, 29 class folders.
 
-Link: [https://www.kaggle.com/datasets/grassknoted/asl-alphabet/data?select=asl_alphabet_train]
+**Class folders used:**
+- `A–Z` (26 uppercase letters) → mapped to canonical labels
+- `nothing` (lowercase) → mapped to canonical class `"nothing"` (class index 36)
 
-The data set is a collection of images of alphabets from the American Sign Language, separated in 29 folders which represent the various classes.
+**Class folders excluded:**
+- `del` - ASL delete gesture; not present in the other two datasets, excluded to keep the label space consistent
+- `space` - ASL space gesture; same reason
 
-The training data set contains 87,000 images which are 200x200 pixels. There are 29 classes, of which 26 are for the letters A-Z and 3 classes for SPACE, DELETE and NOTHING.
-These 3 classes are very helpful in real-time applications, and classification.
-The test data set contains a mere 29 images, to encourage the use of real-world test images.
+### Images excluded - `delete_archive_train.py`
 
-> [!WARNING] It contains SPACE, DELETE and NOTHING; which should be deleted since we do not have this information in the other datasets and this one is not big enough.
+The script `delete_archive_train.py` was run to thin out near-sequential frames from this dataset.
 
-### Discarted data
+**Keep rule:** retain file if its trailing index `n` satisfies  
+`n == 1` **or** `n % 20 == 0`
 
+From a source range of 1–3,000, this keeps indices:  
+`1, 20, 40, 60, …, 2980, 3000`  
+→ **~151 images retained per class** (≈2,849 deleted per class).
+
+**Rationale:** Same as above - removes near-duplicate sequential frames while retaining a well-spaced sample of hand orientations and lighting conditions.
+
+---
+
+## Image sizes across datasets
+
+| Dataset | Native size | After pipeline |
+|---|---|---|
+| combine_asl | 400×400 px | Resized to 224×224 on-the-fly |
+| ASL-HG raw | Variable (smartphone HD) | Resized to 224×224 on-the-fly |
+| ASL Alphabet | 200×200 px | Resized to 224×224 on-the-fly |
+
+All images are resized to **224×224** inside `build_train_transform()` / `build_eval_transform()` in `src/augmentation.py`. No images are pre-resized to disk except when `cache_resized: true` is set in `config.yaml` (for slow Colab Drive I/O).
+
+---
+
+## Discarded data (manual review)
+
+> Add notes here for any classes or individual images removed during manual inspection.
