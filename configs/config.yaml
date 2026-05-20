@@ -1,47 +1,45 @@
-active_env: local   # override with ASL_ENV env var: local | colab | kaggle
+# Environment is auto-detected by src/config.py:detect_env().
+# Override with the ASL_ENV env var: local | colab | kaggle
 
 # ---------------------------------------------------------------------------
 # Paths per execution environment
 # ---------------------------------------------------------------------------
-# After running reorganize.py locally, upload data/asl_clean/ as a single
-# dataset to Kaggle / Google Drive.  All environments then point at asl_clean/.
+# Local layout after running reorganize.py:
+#   data/
+#     asl_clean/{train,val,test}/<class>/  ← images
+#     splits/{train,val,test}.csv  ← manifests (relative to data/)
+#
+# Colab: call config.mount_drive() before load_config(), then upload the
+#   local data/ folder to Drive as MyDrive/asl_clean/ so the structure mirrors:
+#   MyDrive/asl_clean/
+#     asl_clean/  splits/  results/  checkpoints/
+#
+# Kaggle: upload data/ contents as a dataset; asl_clean/ is read-only under
+#   /kaggle/input/; results and checkpoints go to /kaggle/working/.
 paths:
   local:
     data_root: data/
     results_root: results/
     checkpoints_root: checkpoints/
   colab:
-    # Mount your Drive, then set data_root to wherever asl_clean/ lives.
-    data_root: /content/drive/MyDrive/asl/
-    results_root: /content/drive/MyDrive/asl/results/
-    checkpoints_root: /content/drive/MyDrive/asl/checkpoints/
+    data_root: /content/drive/MyDrive/asl_clean/
+    results_root: /content/drive/MyDrive/asl_clean/results/
+    checkpoints_root: /content/drive/MyDrive/asl_clean/checkpoints/
   kaggle:
-    # Upload the repo + asl_clean/ as separate Kaggle datasets (see README).
-    # asl_clean/ is read-only under /kaggle/input/; results go to /kaggle/working/.
-    data_root: /kaggle/input/asl-clean-data/    # <- UPDATE after upload
+    data_root: /kaggle/input/asl-clean-data/    # <- UPDATE to your dataset slug
     results_root: /kaggle/working/results/
     checkpoints_root: /kaggle/working/checkpoints/
 
-# ---------------------------------------------------------------------------
-# Raw dataset locations (local only - used by data_unification.py and
-# reorganize.py; not needed on Kaggle/Colab after asl_clean/ is uploaded).
-# Paths are relative to paths.local.data_root.
-# ---------------------------------------------------------------------------
+# Raw dataset directories (relative to data_root)
 raw_datasets:
   combine_asl: "combine_asl_dataset/"
   asl_hg_raw: "ASL-HG American Sign Language Hand Gesture Image D/ASL-HG American Sign Language Hand Gesture Image D/ASL_HG_36000/ASL_Raw_Images/asl_dataset/"
   asl_alphabet: "archive (2)/asl_alphabet_train/asl_alphabet_train/"
 
-# ---------------------------------------------------------------------------
-# Clean dataset (after reorganize.py runs)
-# Path is relative to the active data_root.
-# Layout: asl_clean/{split}/{class_name}/{image_file}
-# ---------------------------------------------------------------------------
+# clean dataset directory
 clean_dir: asl_clean/
 
-# ---------------------------------------------------------------------------
-# Canonical label space: 37 classes (0-9, A-Z, nothing)
-# ---------------------------------------------------------------------------
+# Labels
 classes:
   - "0"
   - "1"
@@ -190,9 +188,7 @@ class_maps:
     "Z": "Z"
     "nothing": "nothing"
 
-# ---------------------------------------------------------------------------
 # Preprocessing
-# ---------------------------------------------------------------------------
 preprocessing:
   # All images are resized to image_size x image_size on-the-fly during training
   # (via T.Resize in augmentation.py).  The original sizes per dataset are:
@@ -210,9 +206,7 @@ preprocessing:
   random_seed: 33
   cache_resized: false   # enable on Colab to cache pre-resized images locally
 
-# ---------------------------------------------------------------------------
-# DataLoader
-# ---------------------------------------------------------------------------
+# Data loader
 dataloader:
   local:
     batch_size: 64
@@ -233,9 +227,7 @@ dataloader:
     persistent_workers: true
     pin_memory: true
 
-# ---------------------------------------------------------------------------
-# Training
-# ---------------------------------------------------------------------------
+# Training hyperparameters
 training:
   num_epochs: 30
   learning_rate: 1.0e-3
@@ -249,9 +241,7 @@ training:
   scheduler: cosine      # cosine | step | none
   torch_compile: false
 
-# ---------------------------------------------------------------------------
 # Transfer learning
-# ---------------------------------------------------------------------------
 transfer:
   freeze_epochs: 5
   backbones:

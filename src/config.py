@@ -2,16 +2,23 @@
 Configuration loader. Reads configs/config.yaml and resolves
 environment-specific paths (local / colab / kaggle).
 
-Set the ASL_ENV environment variable to override auto-detection.
+Environment detection and all path constants live here — no other file
+should branch on the execution environment.
 
-After running reorganize.py locally, the clean dataset lives at
-  <data_root>/<clean_dir>/   (e.g. data/asl_clean/)
-and split manifests live at
-  <data_root>/splits/{train,val,test}.csv
-with filepaths relative to data_root.
+Auto-detection order (first match wins):
+  1. ASL_ENV env var ("local" | "colab" | "kaggle")
+  2. google.colab importable → "colab"
+  3. KAGGLE_KERNEL_RUN_TYPE set or /kaggle/working exists → "kaggle"
+  4. fallback → "local"
 
-On Kaggle / Colab, point data_root at the root of the uploaded asl_clean/
-parent directory so that the relative paths in the CSV still resolve correctly.
+Colab usage:
+  Call mount_drive() before load_config() so the Drive paths resolve.
+  Data layout on Drive (mirrors the local data/ folder):
+    MyDrive/asl/
+      asl_clean/{train,val,test}/<class>/   ← images
+      splits/{train,val,test}.csv           ← manifests (relative paths)
+      results/
+      checkpoints/
 """
 
 import os
@@ -23,18 +30,30 @@ import yaml
 
 
 def detect_env() -> str:
-    """Auto-detect the execution environment."""
+    """Return the active execution environment: 'local', 'colab', or 'kaggle'."""
     env_override = os.environ.get("ASL_ENV", "").strip().lower()
     if env_override in ("local", "colab", "kaggle"):
         return env_override
-    if os.environ.get("KAGGLE_KERNEL_RUN_TYPE") or pathlib.Path("/kaggle/working").exists():
-        return "kaggle"
+    # Check Colab first
     try:
         import google.colab  # noqa: F401
         return "colab"
     except ImportError:
         pass
+    if os.environ.get("KAGGLE_KERNEL_RUN_TYPE") or pathlib.Path("/kaggle/working").exists():
+        return "kaggle"
     return "local"
+
+
+def mount_drive(mount_point: str = "/content/drive") -> None:
+    """Mount Google Drive on Colab. No-op when not running on Colab."""
+    if detect_env() != "colab":
+        return
+    try:
+        from google.colab import drive  # noqa: F401
+        drive.mount(mount_point)
+    except Exception as exc:
+        print(f"[config] Drive mount failed: {exc}")
 
 
 @dataclass
@@ -103,9 +122,8 @@ def load_config(config_path: str = "configs/config.yaml") -> Config:
     with open(config_path) as f:
         raw = yaml.safe_load(f)
 
-    env_override = os.environ.get("ASL_ENV", "").strip().lower()
-    active_env = env_override if env_override in ("local", "colab", "kaggle") else raw.get("active_env", "local")
-    env = detect_env()
+    active_env = detect_env()
+    print(f"[config] environment: {active_env}")
 
     path_block = raw["paths"][active_env]
     data_root = pathlib.Path(path_block["data_root"])
