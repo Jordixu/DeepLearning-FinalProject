@@ -1,1 +1,3 @@
 - We should decrease the threshold for the phashes. I am seeing very similar images still.
+- We could change the normalization from (0.5 0.5 0.5) to use our own stats, which is technically optimal. This is for the not pretrained model.
+- Model architectures may need to be changed. Current models are placeholders. They should work, but requires more experimentation.
