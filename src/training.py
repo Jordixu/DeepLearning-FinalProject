@@ -157,7 +157,7 @@ class Trainer:
                 self.best_val_f1 = val_f1
                 best_path = str(self.ckpt_dir / "best.pt")
                 save_model(self.model, best_path)
-                print(f"  ✓ New best val macro-F1={val_f1:.4f} - checkpoint saved")
+                print(f"  New best val macro-F1={val_f1:.4f} - checkpoint saved")
 
             save_history(self.history, str(self.results_dir / "history.json"))
 
@@ -177,9 +177,20 @@ class Trainer:
         all_true: List[int] = []
 
         self.optimizer.zero_grad()
+
+        # DEBUG: diagnose hang location
+        import platform, sys
+        print(f"  [DEBUG] _train_epoch start | OS={platform.system()} | Python={sys.version.split()[0]}", flush=True)
+        print(f"  [DEBUG] DataLoader num_workers={self.train_loader.num_workers}  batch_size={self.train_loader.batch_size}", flush=True)
+        print(f"  [DEBUG] Creating iterator (if stuck here -> multiprocessing deadlock)...", flush=True)
+
         pbar = tqdm(self.train_loader, desc=f"  Train E{epoch}", leave=False)
 
+        print(f"  [DEBUG] Iterator created, entering batch loop...", flush=True)
+
         for step, (inputs, labels) in enumerate(pbar):
+            if step == 0:
+                print(f"  [DEBUG] First batch received: inputs={tuple(inputs.shape)} labels={tuple(labels.shape)}", flush=True)
             inputs = inputs.to(self.device, non_blocking=True)
             labels = labels.to(self.device, non_blocking=True)
 
@@ -215,9 +226,11 @@ class Trainer:
         return avg_loss, acc, macro_f1
 
     def _val_epoch(self):
+        print(f"  [DEBUG] _val_epoch start | num_workers={self.val_loader.num_workers}", flush=True)
         val_loss, val_acc, val_f1, val_bal, _, _ = evaluate_model(
             self.model, self.val_loader, self.device, self.criterion
         )
+        print(f"  [DEBUG] _val_epoch done", flush=True)
         return val_loss, val_acc, val_f1, val_bal
 
 
