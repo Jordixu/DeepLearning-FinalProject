@@ -1,10 +1,18 @@
-# Data — never commit raw images or large CSVs
+# Raw source datasets (never commit)
 data/ASL-HG American Sign Language Hand Gesture Image D/
 data/combine_asl_dataset/
-data/archive (2)
+data/archive (2)/
 data/manifest_raw.csv
-data/asl_clean
+data/dedup_report.json
 data/asl_clean.zip
+
+# Full cleaned dataset and shards (large, local-only)
+data/asl_clean/
+data/asl_shards/
+data/splits/asl_clean/
+
+# data/asl_clean_mini/ is intentionally tracked in git (small sample)
+# data/splits/asl_clean_mini/ is intentionally tracked in git
 
 # Generated outputs
 results/
