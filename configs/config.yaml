@@ -4,42 +4,59 @@
 # ---------------------------------------------------------------------------
 # Paths per execution environment
 # ---------------------------------------------------------------------------
-# Local layout after running reorganize.py:
+# Local layout:
 #   data/
-#     asl_clean/{train,val,test}/<class>/  ← images
-#     splits/{train,val,test}.csv  ← manifests (relative to data/)
+#     asl_clean_mini/{train,val,test}/<class>/       <- mini sample (tracked in git)
+#     asl_clean/{train,val,test}/<class>/             <- full dataset (local only)
+#     asl_shards/{train,val,test}/*.tar               <- WebDataset shards (cloud training)
+#     splits/asl_clean_mini/{train,val,test}.csv      <- mini manifests (tracked in git)
+#     splits/asl_clean/{train,val,test}.csv           <- full manifests (local only)
 #
-# Colab: call config.mount_drive() before load_config(), then upload the
-#   local data/ folder to Drive as MyDrive/asl_clean/ so the structure mirrors:
-#   MyDrive/asl_clean/
-#     asl_clean/  splits/  results/  checkpoints/
+# Cloud training:
+#   1. Run the local preprocessing pipeline to produce data/asl_shards/
+#   2. Upload data/ (or just asl_shards/) to your cloud storage
+#   3. Set dataset_variant: shards and update data_root below
 #
-# Kaggle: upload data/ contents as a dataset; asl_clean/ is read-only under
-#   /kaggle/input/; results and checkpoints go to /kaggle/working/.
+#   Colab: call config.mount_drive() before load_config().
+#     Upload data/ to MyDrive/asl/ so that asl_shards/ is at MyDrive/asl/asl_shards/
+#
+#   Kaggle: add your uploaded dataset; update the slug in data_root below.
+#     Expected layout: /kaggle/input/<slug>/asl_shards/{train,val,test}/
 paths:
   local:
     data_root: data/
     results_root: results/
     checkpoints_root: checkpoints/
   colab:
-    data_root: /content/drive/MyDrive/asl_clean/
-    results_root: /content/drive/MyDrive/asl_clean/results/
-    checkpoints_root: /content/drive/MyDrive/asl_clean/checkpoints/
+    data_root: /content/drive/MyDrive/asl/            # upload data/ here as MyDrive/asl/
+    results_root: /content/drive/MyDrive/asl/results/
+    checkpoints_root: /content/drive/MyDrive/asl/checkpoints/
   kaggle:
-    data_root: /kaggle/input/asl-clean-data/    # <- UPDATE to your dataset slug
+    data_root: /kaggle/input/asl-data/                # <- UPDATE to your dataset slug
     results_root: /kaggle/working/results/
     checkpoints_root: /kaggle/working/checkpoints/
 
-# Raw dataset directories (relative to data_root)
+# Raw dataset directories (relative to local data_root).
+# Only used by data_unification.py and preprocessing.py (local, no GPU).
 raw_datasets:
   combine_asl: "combine_asl_dataset/"
   asl_hg_raw: "ASL-HG American Sign Language Hand Gesture Image D/ASL-HG American Sign Language Hand Gesture Image D/ASL_HG_36000/ASL_Raw_Images/asl_dataset/"
   asl_alphabet: "archive (2)/asl_alphabet_train/asl_alphabet_train/"
 
-# WebDataset tar shards (produced by reorganize.py)
-shards_dir: asl_clean/
+# Subdirectory names (relative to data_root)
+mini_dir: asl_clean_mini/
+clean_dir: asl_clean/
+shards_dir: asl_shards/
 
-# Labels
+# ---------------------------------------------------------------------------
+# Active dataset variant — change this one line to switch datasets
+# ---------------------------------------------------------------------------
+#   mini:   data/asl_clean_mini/ + splits/asl_clean_mini/  (small sample, local dev/testing)
+#   full:   data/asl_clean/      + splits/asl_clean/       (full dataset, local only)
+#   shards: data/asl_shards/                               (WebDataset tars, cloud training)
+dataset_variant: mini
+
+# Labels (37 classes: digits 0-9, letters A-Z, nothing)
 classes:
   - "0"
   - "1"
@@ -83,7 +100,6 @@ classes:
 # Folders NOT listed are skipped (e.g. del, space in asl_alphabet).
 class_maps:
   combine_asl:
-    # combine_asl uses lowercase letters, digit strings for numbers
     "0": "0"
     "1": "1"
     "2": "2"
@@ -121,7 +137,6 @@ class_maps:
     "y": "Y"
     "z": "Z"
   asl_hg_raw:
-    # ASL-HG uses uppercase letters and digit strings
     "0": "0"
     "1": "1"
     "2": "2"
@@ -159,7 +174,6 @@ class_maps:
     "Y": "Y"
     "Z": "Z"
   asl_alphabet:
-    # ASL Alphabet uses uppercase letters. del and space are NOT listed -> skipped.
     "A": "A"
     "B": "B"
     "C": "C"
@@ -188,26 +202,25 @@ class_maps:
     "Z": "Z"
     "nothing": "nothing"
 
-# Preprocessing
+# ---------------------------------------------------------------------------
+# Preprocessing (used by preprocessing.py and augmentation.py)
+# ---------------------------------------------------------------------------
 preprocessing:
-  # All images are resized to image_size x image_size on-the-fly during training
-  # (via T.Resize in augmentation.py).  The original sizes per dataset are:
-  #   combine_asl:  400x400 px (enforced by cleanup scripts)
-  #   asl_hg_raw:   variable  (raw capture, different devices)
-  #   asl_alphabet: 200x200 px (after thinning via delete_archive_train.py)
   image_size: 224
-  min_image_size: 32     # drop images smaller than this (px, either dim)
-  phash_threshold: 5     # Hamming distance <= this -> near-duplicate
-  phash_hash_size: 8     # 64-bit pHash
-  shard_size: 1000       # images per tar shard (used by reorganize.py)
+  min_image_size: 32
+  phash_threshold: 5          # Hamming distance <= this -> near-duplicate
+  phash_hash_size: 8          # 64-bit pHash
+  shard_size: 1000            # images per tar shard (reorganize.py)
   split_ratios:
     train: 0.70
     val: 0.15
     test: 0.15
   random_seed: 33
-  cache_resized: false   # enable on Colab to cache pre-resized images locally
+  cache_resized: false
 
-# Data loader
+# ---------------------------------------------------------------------------
+# Data loader (per environment)
+# ---------------------------------------------------------------------------
 dataloader:
   local:
     batch_size: 64
@@ -228,7 +241,9 @@ dataloader:
     persistent_workers: true
     pin_memory: true
 
+# ---------------------------------------------------------------------------
 # Training hyperparameters
+# ---------------------------------------------------------------------------
 training:
   num_epochs: 30
   learning_rate: 1.0e-3
@@ -239,10 +254,12 @@ training:
   use_amp: true
   use_weighted_sampler: false
   use_class_weights: true
-  scheduler: cosine      # cosine | step | none
+  scheduler: cosine           # cosine | step | none
   torch_compile: false
 
+# ---------------------------------------------------------------------------
 # Transfer learning
+# ---------------------------------------------------------------------------
 transfer:
   freeze_epochs: 5
   backbones:

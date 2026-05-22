@@ -11,20 +11,20 @@ Auto-detection order (first match wins):
   3. KAGGLE_KERNEL_RUN_TYPE set or /kaggle/working exists → "kaggle"
   4. fallback → "local"
 
+Dataset variants:
+  mini:   data/asl_clean_mini/ + splits/asl_clean_mini/  (small sample, local dev)
+  full:   data/asl_clean/      + splits/asl_clean/       (full dataset, local only)
+  shards: data/asl_shards/                               (WebDataset tars, cloud training)
+
 Colab usage:
-  Call mount_drive() before load_config() so the Drive paths resolve.
-  Data layout on Drive (mirrors the local data/ folder):
-    MyDrive/asl/
-      asl_clean/{train,val,test}/<class>/   ← images
-      splits/{train,val,test}.csv           ← manifests (relative paths)
-      results/
-      checkpoints/
+  Call mount_drive() before load_config().
+  Upload data/ to MyDrive/asl/ so that asl_shards/ sits at MyDrive/asl/asl_shards/.
 """
 
 import os
 import pathlib
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import yaml
 
@@ -34,7 +34,6 @@ def detect_env() -> str:
     env_override = os.environ.get("ASL_ENV", "").strip().lower()
     if env_override in ("local", "colab", "kaggle"):
         return env_override
-    # Check Colab first
     try:
         import google.colab  # noqa: F401
         return "colab"
@@ -103,10 +102,11 @@ class Config:
     data_root: pathlib.Path
     results_root: pathlib.Path
     checkpoints_root: pathlib.Path
-    clean_dir: pathlib.Path           # <data_root>/asl_clean/
-    shards_dir: pathlib.Path          # <data_root>/asl_shards/
-    splits_dir: pathlib.Path          # <data_root>/splits/
-    # Raw dataset paths - only valid locally (used by data_unification + reorganize)
+    clean_dir: pathlib.Path         # active image directory (mini or full)
+    shards_dir: pathlib.Path        # data_root/asl_shards/
+    dataset_variant: str            # mini | full | shards
+    dataset_source: str             # raw | shards  (derived from variant)
+    splits_dir: pathlib.Path        # splits/ subdirectory for the active variant
     raw_dataset_paths: Dict[str, pathlib.Path]
     classes: List[str]
     class_to_idx: Dict[str, int]
@@ -117,29 +117,53 @@ class Config:
     transfer: TransferConfig
     device: str = "cpu"
 
+    @property
+    def class_weight_source(self) -> pathlib.Path:
+        """Path for compute_class_weights(): train/ dir (shards) or train.csv (raw)."""
+        if self.dataset_source == "shards":
+            return self.shards_dir / "train"
+        return self.splits_dir / "train.csv"
+
+    def dataloader_kwargs(self) -> dict:
+        """
+        Keyword arguments for build_dataloaders(), excluding transforms.
+
+        Usage in notebooks:
+            train_loader, val_loader, test_loader = build_dataloaders(
+                train_transform=train_tf,
+                eval_transform=eval_tf,
+                **cfg.dataloader_kwargs(),
+            )
+        """
+        dl = self.dataloader
+        return dict(
+            shards_dir=self.shards_dir if self.dataset_source == "shards" else None,
+            batch_size=dl.batch_size,
+            num_workers=dl.num_workers,
+            pin_memory=dl.pin_memory,
+            persistent_workers=dl.persistent_workers,
+            prefetch_factor=dl.prefetch_factor,
+            dataset_source=self.dataset_source,
+            data_root=self.data_root,
+            splits_dir=self.splits_dir,
+        )
+
 
 def load_config(config_path: str = "configs/config.yaml") -> Config:
     config_path = pathlib.Path(config_path)
-    # Read as bytes and attempt several decodings to avoid UnicodeDecodeError
     with open(config_path, "rb") as f:
         content_bytes = f.read()
 
     raw = None
     for enc in ("utf-8", "utf-8-sig", "cp1252", "latin-1"):
         try:
-            text = content_bytes.decode(enc)
-            raw = yaml.safe_load(text)
+            raw = yaml.safe_load(content_bytes.decode(enc))
             break
         except UnicodeDecodeError:
             continue
-        except yaml.YAMLError:
-            # If YAML parsing fails for a given decoding, re-raise with context
-            raise
 
     if raw is None:
-        # Last-resort: decode with replacement to preserve content and surface parsing errors
-        text = content_bytes.decode("utf-8", errors="replace")
-        raw = yaml.safe_load(text)
+        raw = yaml.safe_load(content_bytes.decode("utf-8", errors="replace"))
 
     active_env = detect_env()
     print(f"[config] environment: {active_env}")
@@ -149,17 +173,41 @@ def load_config(config_path: str = "configs/config.yaml") -> Config:
     results_root = pathlib.Path(path_block["results_root"])
     checkpoints_root = pathlib.Path(path_block["checkpoints_root"])
 
-    clean_dir = data_root / raw.get("clean_dir", "asl_clean/")
     shards_dir = data_root / raw.get("shards_dir", "asl_shards/")
-    splits_dir = data_root / "splits"
 
-    # Raw dataset paths - local only
+    # Dataset variant — controls which data directory and splits to use
+    dataset_variant = raw.get("dataset_variant", None)
+    if dataset_variant is None:
+        # Backward compat: old configs used dataset_source
+        import warnings
+        old_src = str(raw.get("dataset_source", "mini")).strip().lower()
+        dataset_variant = "shards" if old_src == "shards" else "mini"
+        warnings.warn(
+            f"'dataset_source' is deprecated; use 'dataset_variant: {dataset_variant}' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+    dataset_variant = str(dataset_variant).strip().lower()
+    if dataset_variant not in {"mini", "full", "shards"}:
+        raise ValueError("dataset_variant must be one of: mini | full | shards")
+
+    if dataset_variant == "mini":
+        dataset_source = "raw"
+        clean_dir = data_root / raw.get("mini_dir", "asl_clean_mini/")
+        splits_dir = data_root / "splits" / "asl_clean_mini"
+    elif dataset_variant == "full":
+        dataset_source = "raw"
+        clean_dir = data_root / raw.get("clean_dir", "asl_clean/")
+        splits_dir = data_root / "splits" / "asl_clean"
+    else:  # shards
+        dataset_source = "shards"
+        clean_dir = data_root / raw.get("clean_dir", "asl_clean/")
+        splits_dir = data_root / "splits" / "asl_clean"
+
+    # Raw dataset paths (local only, used by data_unification.py + preprocessing.py)
     raw_ds = raw.get("raw_datasets", {})
     local_data_root = pathlib.Path(raw["paths"]["local"]["data_root"])
-    raw_dataset_paths = {
-        name: local_data_root / rel
-        for name, rel in raw_ds.items()
-    }
+    raw_dataset_paths = {name: local_data_root / rel for name, rel in raw_ds.items()}
 
     classes = raw["classes"]
     class_to_idx = {c: i for i, c in enumerate(classes)}
@@ -215,6 +263,8 @@ def load_config(config_path: str = "configs/config.yaml") -> Config:
         checkpoints_root=checkpoints_root,
         clean_dir=clean_dir,
         shards_dir=shards_dir,
+        dataset_variant=dataset_variant,
+        dataset_source=dataset_source,
         splits_dir=splits_dir,
         raw_dataset_paths=raw_dataset_paths,
         classes=classes,

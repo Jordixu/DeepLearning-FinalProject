@@ -1,12 +1,13 @@
 """
-WebDataset-based DataLoaders for ASL classification.
+DataLoaders for ASL classification.
 
-Primary entry point: build_dataloaders(shards_dir, ...)
-  Reads tar shards produced by reorganize.py from:
-      shards_dir/{train,val,test}/*.tar
-      shards_dir/{train,val,test}/_info.json
+Primary entry point: build_dataloaders(...)
+    Can read either:
+            - WebDataset tar shards from shards_dir/{train,val,test}/*.tar
+            - Raw images through data/splits/{train,val,test}.csv
 
-ASLDataset is kept for EDA / offline inspection (reads split CSVs directly).
+ASLDataset is kept for EDA / offline inspection and is also reused by the
+raw-image loading path.
 
 Shard format (per sample inside each tar):
     {key}.jpg   -- JPEG image
@@ -26,6 +27,7 @@ from torch.utils.data import DataLoader, Dataset
 
 
 SegMode = Literal["none", "mediapipe_crop"]
+DatasetSource = Literal["shards", "raw", "auto"]
 
 
 # ---------------------------------------------------------------------------
@@ -91,8 +93,45 @@ def _build_split_loader(
     return loader
 
 
+def _build_raw_loader(
+    csv_path: pathlib.Path,
+    data_root: pathlib.Path,
+    transform: Callable,
+    batch_size: int,
+    num_workers: int,
+    pin_memory: bool,
+    prefetch_factor: int,
+    persistent_workers: bool,
+    shuffle: bool,
+    drop_last: bool,
+) -> DataLoader:
+    import platform
+    print(f"  [DEBUG] _build_raw_loader: csv={csv_path} | num_workers={num_workers} | pin_memory={pin_memory} | OS={platform.system()}", flush=True)
+    dataset = ASLDataset(csv_path, transform=transform, data_root=data_root)
+    print(f"  [DEBUG] Dataset loaded: {len(dataset)} samples", flush=True)
+
+    pw = persistent_workers and num_workers > 0
+    pf = prefetch_factor if num_workers > 0 else None
+
+    return DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=shuffle,
+        num_workers=num_workers,
+        pin_memory=pin_memory,
+        persistent_workers=pw,
+        prefetch_factor=pf,
+        drop_last=drop_last,
+    )
+
+
+def _has_shards(shards_dir: pathlib.Path) -> bool:
+    return all((shards_dir / split / "_info.json").exists() for split in ("train", "val", "test"))
+
+
 def build_dataloaders(
-    shards_dir: Union[str, pathlib.Path],
+    shards_dir: Optional[Union[str, pathlib.Path]] = None,
+    *,
     train_transform: Callable,
     eval_transform: Callable,
     batch_size: int = 64,
@@ -101,9 +140,13 @@ def build_dataloaders(
     persistent_workers: bool = True,
     prefetch_factor: int = 2,
     use_weighted_sampler: bool = False,
+    dataset_source: str = "shards",
+    data_root: Optional[Union[str, pathlib.Path]] = None,
+    splits_dir: Optional[Union[str, pathlib.Path]] = None,
 ) -> Tuple[DataLoader, DataLoader, DataLoader]:
     """
-    Build train / val / test DataLoaders from WebDataset tar shards.
+    Build train / val / test DataLoaders from either WebDataset shards or
+    raw-image split CSVs.
 
     Args:
         shards_dir: Path to the shards root (contains train/, val/, test/).
@@ -111,6 +154,9 @@ def build_dataloaders(
         eval_transform: Transform applied to val/test images.
         use_weighted_sampler: Not supported with WebDataset (IterableDataset).
             Use use_class_weights=True in the Trainer for weighted loss instead.
+        dataset_source: shards | raw | auto.
+        data_root: Root directory used to resolve relative image paths in raw mode.
+        splits_dir: Directory that contains train.csv / val.csv / test.csv in raw mode.
     """
     if use_weighted_sampler:
         import warnings
@@ -120,23 +166,60 @@ def build_dataloaders(
             UserWarning,
         )
 
-    shards_dir = pathlib.Path(shards_dir)
+    dataset_source = str(dataset_source).strip().lower()
+    if dataset_source not in {"shards", "raw", "auto"}:
+        raise ValueError("dataset_source must be one of: shards, raw, auto")
 
-    train_loader = _build_split_loader(
-        shards_dir / "train", train_transform, batch_size, num_workers,
-        pin_memory, prefetch_factor, persistent_workers,
-        shuffle=True, drop_last=True,
-    )
-    val_loader = _build_split_loader(
-        shards_dir / "val", eval_transform, batch_size, num_workers,
-        pin_memory, prefetch_factor, persistent_workers,
-        shuffle=False, drop_last=False,
-    )
-    test_loader = _build_split_loader(
-        shards_dir / "test", eval_transform, batch_size, num_workers,
-        pin_memory, prefetch_factor, persistent_workers,
-        shuffle=False, drop_last=False,
-    )
+    if dataset_source == "auto":
+        if shards_dir is not None and _has_shards(pathlib.Path(shards_dir)):
+            dataset_source = "shards"
+        else:
+            dataset_source = "raw"
+
+    if dataset_source == "shards":
+        if shards_dir is None:
+            raise ValueError("shards_dir is required when dataset_source='shards'")
+        shards_dir = pathlib.Path(shards_dir)
+
+        train_loader = _build_split_loader(
+            shards_dir / "train", train_transform, batch_size, num_workers,
+            pin_memory, prefetch_factor, persistent_workers,
+            shuffle=True, drop_last=True,
+        )
+        val_loader = _build_split_loader(
+            shards_dir / "val", eval_transform, batch_size, num_workers,
+            pin_memory, prefetch_factor, persistent_workers,
+            shuffle=False, drop_last=False,
+        )
+        test_loader = _build_split_loader(
+            shards_dir / "test", eval_transform, batch_size, num_workers,
+            pin_memory, prefetch_factor, persistent_workers,
+            shuffle=False, drop_last=False,
+        )
+    else:
+        if splits_dir is None:
+            raise ValueError("splits_dir is required when dataset_source='raw'")
+        if data_root is None:
+            raise ValueError("data_root is required when dataset_source='raw'")
+
+        splits_dir = pathlib.Path(splits_dir)
+        data_root = pathlib.Path(data_root)
+
+        train_loader = _build_raw_loader(
+            splits_dir / "train.csv", data_root, train_transform, batch_size, num_workers,
+            pin_memory, prefetch_factor, persistent_workers,
+            shuffle=True, drop_last=True,
+        )
+        val_loader = _build_raw_loader(
+            splits_dir / "val.csv", data_root, eval_transform, batch_size, num_workers,
+            pin_memory, prefetch_factor, persistent_workers,
+            shuffle=False, drop_last=False,
+        )
+        test_loader = _build_raw_loader(
+            splits_dir / "test.csv", data_root, eval_transform, batch_size, num_workers,
+            pin_memory, prefetch_factor, persistent_workers,
+            shuffle=False, drop_last=False,
+        )
 
     return train_loader, val_loader, test_loader
 
@@ -192,7 +275,8 @@ class ASLDataset(Dataset):
         return img, class_id
 
     def _resolve(self, raw_path: str) -> pathlib.Path:
-        p = pathlib.Path(raw_path)
+        # Normalize Windows backslashes so paths work on Linux (Colab/Kaggle)
+        p = pathlib.Path(raw_path.replace("\\", "/"))
         if p.is_absolute():
             return p
         if self.data_root is not None:
