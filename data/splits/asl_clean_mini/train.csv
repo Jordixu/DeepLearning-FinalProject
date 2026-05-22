@@ -1,0 +1,371 @@
+filepath,class_id,class_name,source_dataset,original_split
+asl_clean_mini/train/0/asl_hg_raw_P1_0_100.jpg,0,0,asl_hg_raw,train
+asl_clean_mini/train/0/combine_asl_hand1_0_bot_seg_2_cropped.jpeg,0,0,combine_asl,train
+asl_clean_mini/train/0/combine_asl_hand1_0_top_seg_3_cropped.jpeg,0,0,combine_asl,train
+asl_clean_mini/train/0/combine_asl_hand2_0_bot_seg_2_cropped.jpeg,0,0,combine_asl,train
+asl_clean_mini/train/0/combine_asl_hand2_0_dif_seg_1_cropped.jpeg,0,0,combine_asl,train
+asl_clean_mini/train/0/combine_asl_hand2_0_top_seg_3_cropped.jpeg,0,0,combine_asl,train
+asl_clean_mini/train/0/combine_asl_hand3_0_dif_seg_1_cropped.jpeg,0,0,combine_asl,train
+asl_clean_mini/train/0/combine_asl_hand3_0_dif_seg_4_cropped.jpeg,0,0,combine_asl,train
+asl_clean_mini/train/0/combine_asl_hand5_0_dif_seg_4_cropped.jpeg,0,0,combine_asl,train
+asl_clean_mini/train/0/combine_asl_hand5_0_dif_seg_5_cropped.jpeg,0,0,combine_asl,train
+asl_clean_mini/train/1/asl_hg_raw_P10_1_1000.jpg,1,1,asl_hg_raw,train
+asl_clean_mini/train/1/combine_asl_hand1_1_bot_seg_2_cropped.jpeg,1,1,combine_asl,train
+asl_clean_mini/train/1/combine_asl_hand1_1_bot_seg_4_cropped.jpeg,1,1,combine_asl,train
+asl_clean_mini/train/1/combine_asl_hand1_1_top_seg_3_cropped.jpeg,1,1,combine_asl,train
+asl_clean_mini/train/1/combine_asl_hand3_1_dif_seg_4_cropped.jpeg,1,1,combine_asl,train
+asl_clean_mini/train/1/combine_asl_hand3_1_dif_seg_5_cropped.jpeg,1,1,combine_asl,train
+asl_clean_mini/train/1/combine_asl_hand4_1_bot_seg_3_cropped.jpeg,1,1,combine_asl,train
+asl_clean_mini/train/1/combine_asl_hand5_1_bot_seg_1_cropped.jpeg,1,1,combine_asl,train
+asl_clean_mini/train/1/combine_asl_hand5_1_bot_seg_2_cropped.jpeg,1,1,combine_asl,train
+asl_clean_mini/train/1/combine_asl_hand5_1_bot_seg_5_cropped.jpeg,1,1,combine_asl,train
+asl_clean_mini/train/2/asl_hg_raw_P3_2_250.jpg,2,2,asl_hg_raw,train
+asl_clean_mini/train/2/asl_hg_raw_P8_2_750.jpg,2,2,asl_hg_raw,train
+asl_clean_mini/train/2/asl_hg_raw_P8_2_800.jpg,2,2,asl_hg_raw,train
+asl_clean_mini/train/2/combine_asl_hand1_2_right_seg_1_cropped.jpeg,2,2,combine_asl,train
+asl_clean_mini/train/2/combine_asl_hand1_2_right_seg_4_cropped.jpeg,2,2,combine_asl,train
+asl_clean_mini/train/2/combine_asl_hand2_2_dif_seg_1_cropped.jpeg,2,2,combine_asl,train
+asl_clean_mini/train/2/combine_asl_hand2_2_dif_seg_2_cropped.jpeg,2,2,combine_asl,train
+asl_clean_mini/train/2/combine_asl_hand3_2_dif_seg_1_cropped.jpeg,2,2,combine_asl,train
+asl_clean_mini/train/2/combine_asl_hand4_2_bot_seg_2_cropped.jpeg,2,2,combine_asl,train
+asl_clean_mini/train/2/combine_asl_hand5_2_bot_seg_2_cropped.jpeg,2,2,combine_asl,train
+asl_clean_mini/train/3/asl_hg_raw_P1_3_1.jpg,3,3,asl_hg_raw,train
+asl_clean_mini/train/3/asl_hg_raw_P6_3_501.jpg,3,3,asl_hg_raw,train
+asl_clean_mini/train/3/combine_asl_hand1_3_bot_seg_5_cropped.jpeg,3,3,combine_asl,train
+asl_clean_mini/train/3/combine_asl_hand1_3_left_seg_1_cropped.jpeg,3,3,combine_asl,train
+asl_clean_mini/train/3/combine_asl_hand1_3_top_seg_3_cropped.jpeg,3,3,combine_asl,train
+asl_clean_mini/train/3/combine_asl_hand2_3_bot_seg_2_cropped.jpeg,3,3,combine_asl,train
+asl_clean_mini/train/3/combine_asl_hand2_3_bot_seg_4_cropped.jpeg,3,3,combine_asl,train
+asl_clean_mini/train/3/combine_asl_hand2_3_left_seg_3_cropped.jpeg,3,3,combine_asl,train
+asl_clean_mini/train/3/combine_asl_hand2_3_top_seg_2_cropped.jpeg,3,3,combine_asl,train
+asl_clean_mini/train/3/combine_asl_hand3_3_dif_seg_3_cropped.jpeg,3,3,combine_asl,train
+asl_clean_mini/train/4/asl_hg_raw_P3_4_201.jpg,4,4,asl_hg_raw,train
+asl_clean_mini/train/4/asl_hg_raw_P8_4_750.jpg,4,4,asl_hg_raw,train
+asl_clean_mini/train/4/combine_asl_hand1_4_dif_seg_3_cropped.jpeg,4,4,combine_asl,train
+asl_clean_mini/train/4/combine_asl_hand1_4_left_seg_1_cropped.jpeg,4,4,combine_asl,train
+asl_clean_mini/train/4/combine_asl_hand1_4_right_seg_3_cropped.jpeg,4,4,combine_asl,train
+asl_clean_mini/train/4/combine_asl_hand1_4_right_seg_5_cropped.jpeg,4,4,combine_asl,train
+asl_clean_mini/train/4/combine_asl_hand1_4_top_seg_3_cropped.jpeg,4,4,combine_asl,train
+asl_clean_mini/train/4/combine_asl_hand2_4_bot_seg_3_cropped.jpeg,4,4,combine_asl,train
+asl_clean_mini/train/4/combine_asl_hand2_4_bot_seg_5_cropped.jpeg,4,4,combine_asl,train
+asl_clean_mini/train/4/combine_asl_hand4_4_bot_seg_1_cropped.jpeg,4,4,combine_asl,train
+asl_clean_mini/train/5/asl_hg_raw_P1_5_1.jpg,5,5,asl_hg_raw,train
+asl_clean_mini/train/5/asl_hg_raw_P3_5_250.jpg,5,5,asl_hg_raw,train
+asl_clean_mini/train/5/asl_hg_raw_P5_5_500.jpg,5,5,asl_hg_raw,train
+asl_clean_mini/train/5/combine_asl_hand1_5_right_seg_5_cropped.jpeg,5,5,combine_asl,train
+asl_clean_mini/train/5/combine_asl_hand1_5_top_seg_4_cropped.jpeg,5,5,combine_asl,train
+asl_clean_mini/train/5/combine_asl_hand1_5_top_seg_5_cropped.jpeg,5,5,combine_asl,train
+asl_clean_mini/train/5/combine_asl_hand2_5_left_seg_2_cropped.jpeg,5,5,combine_asl,train
+asl_clean_mini/train/5/combine_asl_hand2_5_left_seg_4_cropped.jpeg,5,5,combine_asl,train
+asl_clean_mini/train/5/combine_asl_hand2_5_top_seg_4_cropped.jpeg,5,5,combine_asl,train
+asl_clean_mini/train/5/combine_asl_hand2_5_top_seg_5_cropped.jpeg,5,5,combine_asl,train
+asl_clean_mini/train/6/asl_hg_raw_P10_6_1000.jpg,6,6,asl_hg_raw,train
+asl_clean_mini/train/6/asl_hg_raw_P1_6_100.jpg,6,6,asl_hg_raw,train
+asl_clean_mini/train/6/combine_asl_hand1_6_top_seg_2_cropped.jpeg,6,6,combine_asl,train
+asl_clean_mini/train/6/combine_asl_hand1_6_top_seg_4_cropped.jpeg,6,6,combine_asl,train
+asl_clean_mini/train/6/combine_asl_hand2_6_bot_seg_4_cropped.jpeg,6,6,combine_asl,train
+asl_clean_mini/train/6/combine_asl_hand2_6_dif_seg_1_cropped.jpeg,6,6,combine_asl,train
+asl_clean_mini/train/6/combine_asl_hand2_6_dif_seg_4_cropped.jpeg,6,6,combine_asl,train
+asl_clean_mini/train/6/combine_asl_hand2_6_right_seg_2_cropped.jpeg,6,6,combine_asl,train
+asl_clean_mini/train/6/combine_asl_hand2_6_right_seg_3_cropped.jpeg,6,6,combine_asl,train
+asl_clean_mini/train/6/combine_asl_hand5_6_bot_seg_4_cropped.jpeg,6,6,combine_asl,train
+asl_clean_mini/train/7/asl_hg_raw_P6_7_501.jpg,7,7,asl_hg_raw,train
+asl_clean_mini/train/7/asl_hg_raw_P6_7_550.jpg,7,7,asl_hg_raw,train
+asl_clean_mini/train/7/asl_hg_raw_P9_7_850.jpg,7,7,asl_hg_raw,train
+asl_clean_mini/train/7/asl_hg_raw_P9_7_900.jpg,7,7,asl_hg_raw,train
+asl_clean_mini/train/7/combine_asl_hand1_7_dif_seg_1_cropped.jpeg,7,7,combine_asl,train
+asl_clean_mini/train/7/combine_asl_hand1_7_left_seg_2_cropped.jpeg,7,7,combine_asl,train
+asl_clean_mini/train/7/combine_asl_hand1_7_top_seg_2_cropped.jpeg,7,7,combine_asl,train
+asl_clean_mini/train/7/combine_asl_hand4_7_bot_seg_4_cropped.jpeg,7,7,combine_asl,train
+asl_clean_mini/train/7/combine_asl_hand5_7_bot_seg_2_cropped.jpeg,7,7,combine_asl,train
+asl_clean_mini/train/7/combine_asl_hand5_7_dif_seg_1_cropped.jpeg,7,7,combine_asl,train
+asl_clean_mini/train/8/asl_hg_raw_P5_8_500.jpg,8,8,asl_hg_raw,train
+asl_clean_mini/train/8/asl_hg_raw_P6_8_550.jpg,8,8,asl_hg_raw,train
+asl_clean_mini/train/8/asl_hg_raw_P8_8_701.jpg,8,8,asl_hg_raw,train
+asl_clean_mini/train/8/combine_asl_hand1_8_right_seg_3_cropped.jpeg,8,8,combine_asl,train
+asl_clean_mini/train/8/combine_asl_hand1_8_right_seg_4_cropped.jpeg,8,8,combine_asl,train
+asl_clean_mini/train/8/combine_asl_hand2_8_dif_seg_3_cropped.jpeg,8,8,combine_asl,train
+asl_clean_mini/train/8/combine_asl_hand2_8_left_seg_2_cropped.jpeg,8,8,combine_asl,train
+asl_clean_mini/train/8/combine_asl_hand2_8_left_seg_5_cropped.jpeg,8,8,combine_asl,train
+asl_clean_mini/train/8/combine_asl_hand3_8_dif_seg_1_cropped.jpeg,8,8,combine_asl,train
+asl_clean_mini/train/8/combine_asl_hand5_8_dif_seg_5_cropped.jpeg,8,8,combine_asl,train
+asl_clean_mini/train/9/asl_hg_raw_P10_9_901.jpg,9,9,asl_hg_raw,train
+asl_clean_mini/train/9/asl_hg_raw_P5_9_401.jpg,9,9,asl_hg_raw,train
+asl_clean_mini/train/9/asl_hg_raw_P9_9_850.jpg,9,9,asl_hg_raw,train
+asl_clean_mini/train/9/combine_asl_hand1_9_left_seg_5_cropped.jpeg,9,9,combine_asl,train
+asl_clean_mini/train/9/combine_asl_hand1_9_right_seg_1_cropped.jpeg,9,9,combine_asl,train
+asl_clean_mini/train/9/combine_asl_hand1_9_right_seg_3_cropped.jpeg,9,9,combine_asl,train
+asl_clean_mini/train/9/combine_asl_hand1_9_right_seg_5_cropped.jpeg,9,9,combine_asl,train
+asl_clean_mini/train/9/combine_asl_hand2_9_left_seg_2_cropped.jpeg,9,9,combine_asl,train
+asl_clean_mini/train/9/combine_asl_hand3_9_dif_seg_3_cropped.jpeg,9,9,combine_asl,train
+asl_clean_mini/train/9/combine_asl_hand5_9_dif_seg_2_cropped.jpeg,9,9,combine_asl,train
+asl_clean_mini/train/A/asl_alphabet_A1940.jpg,10,A,asl_alphabet,train
+asl_clean_mini/train/A/asl_alphabet_A2060.jpg,10,A,asl_alphabet,train
+asl_clean_mini/train/A/asl_alphabet_A2220.jpg,10,A,asl_alphabet,train
+asl_clean_mini/train/A/asl_alphabet_A2300.jpg,10,A,asl_alphabet,train
+asl_clean_mini/train/A/asl_alphabet_A2720.jpg,10,A,asl_alphabet,train
+asl_clean_mini/train/A/asl_alphabet_A500.jpg,10,A,asl_alphabet,train
+asl_clean_mini/train/A/asl_alphabet_A980.jpg,10,A,asl_alphabet,train
+asl_clean_mini/train/A/combine_asl_hand1_a_bot_seg_4_cropped.jpeg,10,A,combine_asl,train
+asl_clean_mini/train/A/combine_asl_hand2_a_dif_seg_5_cropped.jpeg,10,A,combine_asl,train
+asl_clean_mini/train/A/combine_asl_hand4_a_bot_seg_5_cropped.jpeg,10,A,combine_asl,train
+asl_clean_mini/train/B/asl_alphabet_B2000.jpg,11,B,asl_alphabet,train
+asl_clean_mini/train/B/asl_alphabet_B2300.jpg,11,B,asl_alphabet,train
+asl_clean_mini/train/B/asl_alphabet_B2900.jpg,11,B,asl_alphabet,train
+asl_clean_mini/train/B/asl_hg_raw_P3_B_201.jpg,11,B,asl_hg_raw,train
+asl_clean_mini/train/B/combine_asl_hand1_b_left_seg_4_cropped.jpeg,11,B,combine_asl,train
+asl_clean_mini/train/B/combine_asl_hand1_b_top_seg_5_cropped.jpeg,11,B,combine_asl,train
+asl_clean_mini/train/B/combine_asl_hand2_b_left_seg_5_cropped.jpeg,11,B,combine_asl,train
+asl_clean_mini/train/B/combine_asl_hand2_b_top_seg_4_cropped.jpeg,11,B,combine_asl,train
+asl_clean_mini/train/B/combine_asl_hand3_b_dif_seg_2_cropped.jpeg,11,B,combine_asl,train
+asl_clean_mini/train/B/combine_asl_hand5_b_dif_seg_5_cropped.jpeg,11,B,combine_asl,train
+asl_clean_mini/train/C/asl_alphabet_C1020.jpg,12,C,asl_alphabet,train
+asl_clean_mini/train/C/asl_alphabet_C1840.jpg,12,C,asl_alphabet,train
+asl_clean_mini/train/C/asl_alphabet_C2160.jpg,12,C,asl_alphabet,train
+asl_clean_mini/train/C/asl_alphabet_C2340.jpg,12,C,asl_alphabet,train
+asl_clean_mini/train/C/asl_alphabet_C2840.jpg,12,C,asl_alphabet,train
+asl_clean_mini/train/C/asl_alphabet_C520.jpg,12,C,asl_alphabet,train
+asl_clean_mini/train/C/combine_asl_hand1_c_right_seg_4_cropped.jpeg,12,C,combine_asl,train
+asl_clean_mini/train/C/combine_asl_hand2_c_left_seg_2_cropped.jpeg,12,C,combine_asl,train
+asl_clean_mini/train/C/combine_asl_hand2_c_right_seg_2_cropped.jpeg,12,C,combine_asl,train
+asl_clean_mini/train/C/combine_asl_hand5_c_dif_seg_4_cropped.jpeg,12,C,combine_asl,train
+asl_clean_mini/train/D/asl_alphabet_D1520.jpg,13,D,asl_alphabet,train
+asl_clean_mini/train/D/asl_alphabet_D2080.jpg,13,D,asl_alphabet,train
+asl_clean_mini/train/D/asl_alphabet_D2100.jpg,13,D,asl_alphabet,train
+asl_clean_mini/train/D/asl_alphabet_D280.jpg,13,D,asl_alphabet,train
+asl_clean_mini/train/D/asl_alphabet_D2980.jpg,13,D,asl_alphabet,train
+asl_clean_mini/train/D/asl_alphabet_D480.jpg,13,D,asl_alphabet,train
+asl_clean_mini/train/D/asl_hg_raw_P6_D_600.jpg,13,D,asl_hg_raw,train
+asl_clean_mini/train/D/combine_asl_hand2_d_dif_seg_4_cropped.jpeg,13,D,combine_asl,train
+asl_clean_mini/train/D/combine_asl_hand2_d_top_seg_3_cropped.jpeg,13,D,combine_asl,train
+asl_clean_mini/train/D/combine_asl_hand5_d_bot_seg_5_cropped.jpeg,13,D,combine_asl,train
+asl_clean_mini/train/E/asl_alphabet_E1200.jpg,14,E,asl_alphabet,train
+asl_clean_mini/train/E/asl_alphabet_E1440.jpg,14,E,asl_alphabet,train
+asl_clean_mini/train/E/asl_alphabet_E1820.jpg,14,E,asl_alphabet,train
+asl_clean_mini/train/E/asl_alphabet_E2000.jpg,14,E,asl_alphabet,train
+asl_clean_mini/train/E/asl_alphabet_E2200.jpg,14,E,asl_alphabet,train
+asl_clean_mini/train/E/asl_hg_raw_P1_E_1.jpg,14,E,asl_hg_raw,train
+asl_clean_mini/train/E/combine_asl_hand1_e_top_seg_5_cropped.jpeg,14,E,combine_asl,train
+asl_clean_mini/train/E/combine_asl_hand2_e_bot_seg_4_cropped.jpeg,14,E,combine_asl,train
+asl_clean_mini/train/E/combine_asl_hand2_e_right_seg_2_cropped.jpeg,14,E,combine_asl,train
+asl_clean_mini/train/E/combine_asl_hand5_e_dif_seg_5_cropped.jpeg,14,E,combine_asl,train
+asl_clean_mini/train/F/asl_alphabet_F1060.jpg,15,F,asl_alphabet,train
+asl_clean_mini/train/F/asl_alphabet_F1780.jpg,15,F,asl_alphabet,train
+asl_clean_mini/train/F/asl_alphabet_F2220.jpg,15,F,asl_alphabet,train
+asl_clean_mini/train/F/asl_hg_raw_P8_F_701.jpg,15,F,asl_hg_raw,train
+asl_clean_mini/train/F/combine_asl_hand1_f_bot_seg_1_cropped.jpeg,15,F,combine_asl,train
+asl_clean_mini/train/F/combine_asl_hand1_f_dif_seg_1_cropped.jpeg,15,F,combine_asl,train
+asl_clean_mini/train/F/combine_asl_hand1_f_dif_seg_3_cropped.jpeg,15,F,combine_asl,train
+asl_clean_mini/train/F/combine_asl_hand1_f_left_seg_5_cropped.jpeg,15,F,combine_asl,train
+asl_clean_mini/train/F/combine_asl_hand2_f_left_seg_2_cropped.jpeg,15,F,combine_asl,train
+asl_clean_mini/train/F/combine_asl_hand2_f_top_seg_5_cropped.jpeg,15,F,combine_asl,train
+asl_clean_mini/train/G/asl_alphabet_G1240.jpg,16,G,asl_alphabet,train
+asl_clean_mini/train/G/asl_alphabet_G1340.jpg,16,G,asl_alphabet,train
+asl_clean_mini/train/G/asl_alphabet_G2040.jpg,16,G,asl_alphabet,train
+asl_clean_mini/train/G/combine_asl_color_6_0201 (2).png,16,G,combine_asl,train
+asl_clean_mini/train/G/combine_asl_color_6_0209 (2).png,16,G,combine_asl,train
+asl_clean_mini/train/G/combine_asl_color_6_0231.png,16,G,combine_asl,train
+asl_clean_mini/train/G/combine_asl_color_6_0241 (3).png,16,G,combine_asl,train
+asl_clean_mini/train/G/combine_asl_G1744.jpg,16,G,combine_asl,train
+asl_clean_mini/train/G/combine_asl_G1992.jpg,16,G,combine_asl,train
+asl_clean_mini/train/G/combine_asl_hand4_g_bot_seg_2_cropped.jpeg,16,G,combine_asl,train
+asl_clean_mini/train/H/combine_asl_color_7_0458 (5).png,17,H,combine_asl,train
+asl_clean_mini/train/H/combine_asl_color_7_0460.png,17,H,combine_asl,train
+asl_clean_mini/train/H/combine_asl_color_7_0464.png,17,H,combine_asl,train
+asl_clean_mini/train/H/combine_asl_color_7_0509.png,17,H,combine_asl,train
+asl_clean_mini/train/H/combine_asl_color_7_0539.png,17,H,combine_asl,train
+asl_clean_mini/train/H/combine_asl_H1332.jpg,17,H,combine_asl,train
+asl_clean_mini/train/H/combine_asl_H1454.jpg,17,H,combine_asl,train
+asl_clean_mini/train/H/combine_asl_H1636.jpg,17,H,combine_asl,train
+asl_clean_mini/train/H/combine_asl_H2410.jpg,17,H,combine_asl,train
+asl_clean_mini/train/H/combine_asl_H2494.jpg,17,H,combine_asl,train
+asl_clean_mini/train/I/combine_asl_color_8_0063.png,18,I,combine_asl,train
+asl_clean_mini/train/I/combine_asl_color_8_0220 (4).png,18,I,combine_asl,train
+asl_clean_mini/train/I/combine_asl_color_8_0271 (5).png,18,I,combine_asl,train
+asl_clean_mini/train/I/combine_asl_color_8_0283 (3).png,18,I,combine_asl,train
+asl_clean_mini/train/I/combine_asl_color_8_0430 (2).png,18,I,combine_asl,train
+asl_clean_mini/train/I/combine_asl_color_8_0437 (4).png,18,I,combine_asl,train
+asl_clean_mini/train/I/combine_asl_hand1_i_dif_seg_1_cropped.jpeg,18,I,combine_asl,train
+asl_clean_mini/train/I/combine_asl_I1516.jpg,18,I,combine_asl,train
+asl_clean_mini/train/I/combine_asl_I582.jpg,18,I,combine_asl,train
+asl_clean_mini/train/I/combine_asl_I7 (5).jpg,18,I,combine_asl,train
+asl_clean_mini/train/J/combine_asl_J110.jpg,19,J,combine_asl,train
+asl_clean_mini/train/J/combine_asl_J1215.jpg,19,J,combine_asl,train
+asl_clean_mini/train/J/combine_asl_J1689.jpg,19,J,combine_asl,train
+asl_clean_mini/train/J/combine_asl_J1755.jpg,19,J,combine_asl,train
+asl_clean_mini/train/J/combine_asl_J2664.jpg,19,J,combine_asl,train
+asl_clean_mini/train/J/combine_asl_J2849.jpg,19,J,combine_asl,train
+asl_clean_mini/train/J/combine_asl_J372.jpg,19,J,combine_asl,train
+asl_clean_mini/train/J/combine_asl_J503.jpg,19,J,combine_asl,train
+asl_clean_mini/train/J/combine_asl_J716.jpg,19,J,combine_asl,train
+asl_clean_mini/train/J/combine_asl_J875.jpg,19,J,combine_asl,train
+asl_clean_mini/train/K/asl_alphabet_K1280.jpg,20,K,asl_alphabet,train
+asl_clean_mini/train/K/combine_asl_color_10_0111 (3).png,20,K,combine_asl,train
+asl_clean_mini/train/K/combine_asl_color_10_0328 (2).png,20,K,combine_asl,train
+asl_clean_mini/train/K/combine_asl_color_10_0437 (5).png,20,K,combine_asl,train
+asl_clean_mini/train/K/combine_asl_color_10_0718.png,20,K,combine_asl,train
+asl_clean_mini/train/K/combine_asl_K1478.jpg,20,K,combine_asl,train
+asl_clean_mini/train/K/combine_asl_K1575.jpg,20,K,combine_asl,train
+asl_clean_mini/train/K/combine_asl_K1785.jpg,20,K,combine_asl,train
+asl_clean_mini/train/K/combine_asl_K380.jpg,20,K,combine_asl,train
+asl_clean_mini/train/K/combine_asl_K504.jpg,20,K,combine_asl,train
+asl_clean_mini/train/L/combine_asl_color_11_0105 (3).png,21,L,combine_asl,train
+asl_clean_mini/train/L/combine_asl_color_11_0208 (4).png,21,L,combine_asl,train
+asl_clean_mini/train/L/combine_asl_color_11_0234 (3).png,21,L,combine_asl,train
+asl_clean_mini/train/L/combine_asl_color_11_0278.png,21,L,combine_asl,train
+asl_clean_mini/train/L/combine_asl_color_11_0407.png,21,L,combine_asl,train
+asl_clean_mini/train/L/combine_asl_color_11_0513.png,21,L,combine_asl,train
+asl_clean_mini/train/L/combine_asl_L102.jpg,21,L,combine_asl,train
+asl_clean_mini/train/L/combine_asl_L1686.jpg,21,L,combine_asl,train
+asl_clean_mini/train/L/combine_asl_L20.jpg,21,L,combine_asl,train
+asl_clean_mini/train/L/combine_asl_L754.jpg,21,L,combine_asl,train
+asl_clean_mini/train/M/combine_asl_color_12_0003 (5).png,22,M,combine_asl,train
+asl_clean_mini/train/M/combine_asl_color_12_0073 (4).png,22,M,combine_asl,train
+asl_clean_mini/train/M/combine_asl_color_12_0251 (5).png,22,M,combine_asl,train
+asl_clean_mini/train/M/combine_asl_color_12_0352 (2).png,22,M,combine_asl,train
+asl_clean_mini/train/M/combine_asl_color_12_0357 (2).png,22,M,combine_asl,train
+asl_clean_mini/train/M/combine_asl_color_12_0377 (4).png,22,M,combine_asl,train
+asl_clean_mini/train/M/combine_asl_color_12_0392 (2).png,22,M,combine_asl,train
+asl_clean_mini/train/M/combine_asl_color_12_0406.png,22,M,combine_asl,train
+asl_clean_mini/train/M/combine_asl_color_12_0445 (4).png,22,M,combine_asl,train
+asl_clean_mini/train/M/combine_asl_M9 (6).jpg,22,M,combine_asl,train
+asl_clean_mini/train/N/asl_alphabet_N600.jpg,23,N,asl_alphabet,train
+asl_clean_mini/train/N/combine_asl_color_13_0087.png,23,N,combine_asl,train
+asl_clean_mini/train/N/combine_asl_color_13_0104 (4).png,23,N,combine_asl,train
+asl_clean_mini/train/N/combine_asl_color_13_0170 (4).png,23,N,combine_asl,train
+asl_clean_mini/train/N/combine_asl_color_13_0243 (4).png,23,N,combine_asl,train
+asl_clean_mini/train/N/combine_asl_color_13_0286 (3).png,23,N,combine_asl,train
+asl_clean_mini/train/N/combine_asl_color_13_0343 (3).png,23,N,combine_asl,train
+asl_clean_mini/train/N/combine_asl_color_13_0369.png,23,N,combine_asl,train
+asl_clean_mini/train/N/combine_asl_color_13_0426 (4).png,23,N,combine_asl,train
+asl_clean_mini/train/N/combine_asl_N7 (2).jpg,23,N,combine_asl,train
+asl_clean_mini/train/nothing/asl_alphabet_nothing1080.jpg,36,nothing,asl_alphabet,train
+asl_clean_mini/train/nothing/asl_alphabet_nothing1540.jpg,36,nothing,asl_alphabet,train
+asl_clean_mini/train/nothing/asl_alphabet_nothing2200.jpg,36,nothing,asl_alphabet,train
+asl_clean_mini/train/nothing/asl_alphabet_nothing2240.jpg,36,nothing,asl_alphabet,train
+asl_clean_mini/train/nothing/asl_alphabet_nothing2360.jpg,36,nothing,asl_alphabet,train
+asl_clean_mini/train/nothing/asl_alphabet_nothing2460.jpg,36,nothing,asl_alphabet,train
+asl_clean_mini/train/nothing/asl_alphabet_nothing2560.jpg,36,nothing,asl_alphabet,train
+asl_clean_mini/train/nothing/asl_alphabet_nothing300.jpg,36,nothing,asl_alphabet,train
+asl_clean_mini/train/nothing/asl_alphabet_nothing380.jpg,36,nothing,asl_alphabet,train
+asl_clean_mini/train/nothing/asl_alphabet_nothing680.jpg,36,nothing,asl_alphabet,train
+asl_clean_mini/train/O/combine_asl_color_14_0067 (3).png,24,O,combine_asl,train
+asl_clean_mini/train/O/combine_asl_color_14_0196 (5).png,24,O,combine_asl,train
+asl_clean_mini/train/O/combine_asl_color_14_0282.png,24,O,combine_asl,train
+asl_clean_mini/train/O/combine_asl_color_14_0419 (3).png,24,O,combine_asl,train
+asl_clean_mini/train/O/combine_asl_color_14_0423 (4).png,24,O,combine_asl,train
+asl_clean_mini/train/O/combine_asl_color_14_0537 (2).png,24,O,combine_asl,train
+asl_clean_mini/train/O/combine_asl_O2774.jpg,24,O,combine_asl,train
+asl_clean_mini/train/O/combine_asl_O419.jpg,24,O,combine_asl,train
+asl_clean_mini/train/O/combine_asl_O43.jpg,24,O,combine_asl,train
+asl_clean_mini/train/O/combine_asl_O508.jpg,24,O,combine_asl,train
+asl_clean_mini/train/P/combine_asl_color_15_0084 (3).png,25,P,combine_asl,train
+asl_clean_mini/train/P/combine_asl_color_15_0310 (4).png,25,P,combine_asl,train
+asl_clean_mini/train/P/combine_asl_color_15_0352 (4).png,25,P,combine_asl,train
+asl_clean_mini/train/P/combine_asl_P1467.jpg,25,P,combine_asl,train
+asl_clean_mini/train/P/combine_asl_P1693.jpg,25,P,combine_asl,train
+asl_clean_mini/train/P/combine_asl_P1763.jpg,25,P,combine_asl,train
+asl_clean_mini/train/P/combine_asl_P2142.jpg,25,P,combine_asl,train
+asl_clean_mini/train/P/combine_asl_P2989.jpg,25,P,combine_asl,train
+asl_clean_mini/train/P/combine_asl_P34.jpg,25,P,combine_asl,train
+asl_clean_mini/train/P/combine_asl_P889.jpg,25,P,combine_asl,train
+asl_clean_mini/train/Q/combine_asl_color_16_0245.png,26,Q,combine_asl,train
+asl_clean_mini/train/Q/combine_asl_color_16_0432 (2).png,26,Q,combine_asl,train
+asl_clean_mini/train/Q/combine_asl_Q1317.jpg,26,Q,combine_asl,train
+asl_clean_mini/train/Q/combine_asl_Q1358.jpg,26,Q,combine_asl,train
+asl_clean_mini/train/Q/combine_asl_Q1373.jpg,26,Q,combine_asl,train
+asl_clean_mini/train/Q/combine_asl_Q1468.jpg,26,Q,combine_asl,train
+asl_clean_mini/train/Q/combine_asl_Q1591.jpg,26,Q,combine_asl,train
+asl_clean_mini/train/Q/combine_asl_Q1770.jpg,26,Q,combine_asl,train
+asl_clean_mini/train/Q/combine_asl_Q1828.jpg,26,Q,combine_asl,train
+asl_clean_mini/train/Q/combine_asl_Q188.jpg,26,Q,combine_asl,train
+asl_clean_mini/train/R/combine_asl_color_17_0095.png,27,R,combine_asl,train
+asl_clean_mini/train/R/combine_asl_color_17_0413 (2).png,27,R,combine_asl,train
+asl_clean_mini/train/R/combine_asl_color_17_0512 (3).png,27,R,combine_asl,train
+asl_clean_mini/train/R/combine_asl_color_17_0520 (5).png,27,R,combine_asl,train
+asl_clean_mini/train/R/combine_asl_R1317.jpg,27,R,combine_asl,train
+asl_clean_mini/train/R/combine_asl_R1966.jpg,27,R,combine_asl,train
+asl_clean_mini/train/R/combine_asl_R3 (6) - Copy.jpg,27,R,combine_asl,train
+asl_clean_mini/train/R/combine_asl_R311.jpg,27,R,combine_asl,train
+asl_clean_mini/train/R/combine_asl_R382.jpg,27,R,combine_asl,train
+asl_clean_mini/train/R/combine_asl_R810.jpg,27,R,combine_asl,train
+asl_clean_mini/train/S/combine_asl_color_18_0085 (3).png,28,S,combine_asl,train
+asl_clean_mini/train/S/combine_asl_color_18_0217 (3).png,28,S,combine_asl,train
+asl_clean_mini/train/S/combine_asl_color_18_0300 (2).png,28,S,combine_asl,train
+asl_clean_mini/train/S/combine_asl_S1276 - Copy.jpg,28,S,combine_asl,train
+asl_clean_mini/train/S/combine_asl_S1305.jpg,28,S,combine_asl,train
+asl_clean_mini/train/S/combine_asl_S1396.jpg,28,S,combine_asl,train
+asl_clean_mini/train/S/combine_asl_S1457.jpg,28,S,combine_asl,train
+asl_clean_mini/train/S/combine_asl_S1795.jpg,28,S,combine_asl,train
+asl_clean_mini/train/S/combine_asl_S2492.jpg,28,S,combine_asl,train
+asl_clean_mini/train/S/combine_asl_S2923.jpg,28,S,combine_asl,train
+asl_clean_mini/train/T/combine_asl_color_19_0150.png,29,T,combine_asl,train
+asl_clean_mini/train/T/combine_asl_color_19_0162 (3).png,29,T,combine_asl,train
+asl_clean_mini/train/T/combine_asl_color_19_0341 (3).png,29,T,combine_asl,train
+asl_clean_mini/train/T/combine_asl_color_19_0392 (4).png,29,T,combine_asl,train
+asl_clean_mini/train/T/combine_asl_color_19_0449 (2).png,29,T,combine_asl,train
+asl_clean_mini/train/T/combine_asl_color_19_0450.png,29,T,combine_asl,train
+asl_clean_mini/train/T/combine_asl_color_19_0491 (3).png,29,T,combine_asl,train
+asl_clean_mini/train/T/combine_asl_color_19_0493.png,29,T,combine_asl,train
+asl_clean_mini/train/T/combine_asl_color_19_0496.png,29,T,combine_asl,train
+asl_clean_mini/train/T/combine_asl_color_19_0521 (4).png,29,T,combine_asl,train
+asl_clean_mini/train/U/asl_alphabet_U1920.jpg,30,U,asl_alphabet,train
+asl_clean_mini/train/U/combine_asl_color_20_0008 (3).png,30,U,combine_asl,train
+asl_clean_mini/train/U/combine_asl_color_20_0348.png,30,U,combine_asl,train
+asl_clean_mini/train/U/combine_asl_color_20_0403.png,30,U,combine_asl,train
+asl_clean_mini/train/U/combine_asl_color_20_0497 (3).png,30,U,combine_asl,train
+asl_clean_mini/train/U/combine_asl_U1715.jpg,30,U,combine_asl,train
+asl_clean_mini/train/U/combine_asl_U1921.jpg,30,U,combine_asl,train
+asl_clean_mini/train/U/combine_asl_U206.jpg,30,U,combine_asl,train
+asl_clean_mini/train/U/combine_asl_U216.jpg,30,U,combine_asl,train
+asl_clean_mini/train/U/combine_asl_U2328.jpg,30,U,combine_asl,train
+asl_clean_mini/train/V/asl_alphabet_V2120.jpg,31,V,asl_alphabet,train
+asl_clean_mini/train/V/combine_asl_color_21_0139 (2).png,31,V,combine_asl,train
+asl_clean_mini/train/V/combine_asl_color_21_0288 (5).png,31,V,combine_asl,train
+asl_clean_mini/train/V/combine_asl_color_21_0377 (2).png,31,V,combine_asl,train
+asl_clean_mini/train/V/combine_asl_color_21_0449.png,31,V,combine_asl,train
+asl_clean_mini/train/V/combine_asl_V1463.jpg,31,V,combine_asl,train
+asl_clean_mini/train/V/combine_asl_V1782.jpg,31,V,combine_asl,train
+asl_clean_mini/train/V/combine_asl_V1797.jpg,31,V,combine_asl,train
+asl_clean_mini/train/V/combine_asl_V257.jpg,31,V,combine_asl,train
+asl_clean_mini/train/V/combine_asl_V2662.jpg,31,V,combine_asl,train
+asl_clean_mini/train/W/asl_alphabet_W2840.jpg,32,W,asl_alphabet,train
+asl_clean_mini/train/W/asl_hg_raw_P6_W_550.jpg,32,W,asl_hg_raw,train
+asl_clean_mini/train/W/combine_asl_color_22_0290.png,32,W,combine_asl,train
+asl_clean_mini/train/W/combine_asl_color_22_0599.png,32,W,combine_asl,train
+asl_clean_mini/train/W/combine_asl_color_22_0729.png,32,W,combine_asl,train
+asl_clean_mini/train/W/combine_asl_W1330.jpg,32,W,combine_asl,train
+asl_clean_mini/train/W/combine_asl_W1493.jpg,32,W,combine_asl,train
+asl_clean_mini/train/W/combine_asl_W252.jpg,32,W,combine_asl,train
+asl_clean_mini/train/W/combine_asl_W558.jpg,32,W,combine_asl,train
+asl_clean_mini/train/W/combine_asl_W986.jpg,32,W,combine_asl,train
+asl_clean_mini/train/X/combine_asl_color_23_0051 (2).png,33,X,combine_asl,train
+asl_clean_mini/train/X/combine_asl_color_23_0145.png,33,X,combine_asl,train
+asl_clean_mini/train/X/combine_asl_color_23_0180.png,33,X,combine_asl,train
+asl_clean_mini/train/X/combine_asl_color_23_0532 (2).png,33,X,combine_asl,train
+asl_clean_mini/train/X/combine_asl_color_23_0622.png,33,X,combine_asl,train
+asl_clean_mini/train/X/combine_asl_X12.jpg,33,X,combine_asl,train
+asl_clean_mini/train/X/combine_asl_X2782.jpg,33,X,combine_asl,train
+asl_clean_mini/train/X/combine_asl_X2884.jpg,33,X,combine_asl,train
+asl_clean_mini/train/X/combine_asl_X312.jpg,33,X,combine_asl,train
+asl_clean_mini/train/X/combine_asl_X620.jpg,33,X,combine_asl,train
+asl_clean_mini/train/Y/combine_asl_color_24_0007 (5).png,34,Y,combine_asl,train
+asl_clean_mini/train/Y/combine_asl_color_24_0024 (2).png,34,Y,combine_asl,train
+asl_clean_mini/train/Y/combine_asl_color_24_0098 (2).png,34,Y,combine_asl,train
+asl_clean_mini/train/Y/combine_asl_color_24_0133 (5).png,34,Y,combine_asl,train
+asl_clean_mini/train/Y/combine_asl_color_24_0249 (2).png,34,Y,combine_asl,train
+asl_clean_mini/train/Y/combine_asl_color_24_0432 (2).png,34,Y,combine_asl,train
+asl_clean_mini/train/Y/combine_asl_hand4_y_bot_seg_3_cropped.jpeg,34,Y,combine_asl,train
+asl_clean_mini/train/Y/combine_asl_Y1694.jpg,34,Y,combine_asl,train
+asl_clean_mini/train/Y/combine_asl_Y2687.jpg,34,Y,combine_asl,train
+asl_clean_mini/train/Y/combine_asl_Y980.jpg,34,Y,combine_asl,train
+asl_clean_mini/train/Z/combine_asl_hand3_z_dif_seg_1_cropped.jpeg,35,Z,combine_asl,train
+asl_clean_mini/train/Z/combine_asl_Z1106.jpg,35,Z,combine_asl,train
+asl_clean_mini/train/Z/combine_asl_Z1168.jpg,35,Z,combine_asl,train
+asl_clean_mini/train/Z/combine_asl_Z1212.jpg,35,Z,combine_asl,train
+asl_clean_mini/train/Z/combine_asl_Z1248.jpg,35,Z,combine_asl,train
+asl_clean_mini/train/Z/combine_asl_Z1418.jpg,35,Z,combine_asl,train
+asl_clean_mini/train/Z/combine_asl_Z1462.jpg,35,Z,combine_asl,train
+asl_clean_mini/train/Z/combine_asl_Z2110.jpg,35,Z,combine_asl,train
+asl_clean_mini/train/Z/combine_asl_Z2113.jpg,35,Z,combine_asl,train
+asl_clean_mini/train/Z/combine_asl_Z32.jpg,35,Z,combine_asl,train

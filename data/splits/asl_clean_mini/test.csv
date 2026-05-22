@@ -1,0 +1,357 @@
+filepath,class_id,class_name,source_dataset,original_split
+asl_clean_mini/test/0/asl_hg_raw_P10_0_901.jpg,0,0,asl_hg_raw,test
+asl_clean_mini/test/0/asl_hg_raw_P1_0_1.jpg,0,0,asl_hg_raw,test
+asl_clean_mini/test/0/asl_hg_raw_P2_0_101.jpg,0,0,asl_hg_raw,test
+asl_clean_mini/test/0/asl_hg_raw_P2_0_200.jpg,0,0,asl_hg_raw,test
+asl_clean_mini/test/0/asl_hg_raw_P6_0_501.jpg,0,0,asl_hg_raw,test
+asl_clean_mini/test/0/asl_hg_raw_P8_0_800.jpg,0,0,asl_hg_raw,test
+asl_clean_mini/test/0/combine_asl_hand5_0_bot_seg_4_cropped.jpeg,0,0,combine_asl,test
+asl_clean_mini/test/0/combine_asl_hand5_0_bot_seg_5_cropped.jpeg,0,0,combine_asl,test
+asl_clean_mini/test/1/asl_hg_raw_P3_1_201.jpg,1,1,asl_hg_raw,test
+asl_clean_mini/test/1/asl_hg_raw_P3_1_250.jpg,1,1,asl_hg_raw,test
+asl_clean_mini/test/1/asl_hg_raw_P3_1_300.jpg,1,1,asl_hg_raw,test
+asl_clean_mini/test/1/asl_hg_raw_P9_1_801.jpg,1,1,asl_hg_raw,test
+asl_clean_mini/test/1/asl_hg_raw_P9_1_850.jpg,1,1,asl_hg_raw,test
+asl_clean_mini/test/1/asl_hg_raw_P9_1_900.jpg,1,1,asl_hg_raw,test
+asl_clean_mini/test/1/combine_asl_hand4_1_bot_seg_2_cropped.jpeg,1,1,combine_asl,test
+asl_clean_mini/test/1/combine_asl_hand5_1_dif_seg_2_cropped.jpeg,1,1,combine_asl,test
+asl_clean_mini/test/1/combine_asl_hand5_1_dif_seg_4_cropped.jpeg,1,1,combine_asl,test
+asl_clean_mini/test/2/combine_asl_hand1_2_bot_seg_4_cropped.jpeg,2,2,combine_asl,test
+asl_clean_mini/test/2/combine_asl_hand1_2_left_seg_1_cropped.jpeg,2,2,combine_asl,test
+asl_clean_mini/test/2/combine_asl_hand1_2_left_seg_2_cropped.jpeg,2,2,combine_asl,test
+asl_clean_mini/test/2/combine_asl_hand1_2_left_seg_3_cropped.jpeg,2,2,combine_asl,test
+asl_clean_mini/test/2/combine_asl_hand1_2_left_seg_4_cropped.jpeg,2,2,combine_asl,test
+asl_clean_mini/test/2/combine_asl_hand2_2_left_seg_3_cropped.jpeg,2,2,combine_asl,test
+asl_clean_mini/test/2/combine_asl_hand2_2_left_seg_4_cropped.jpeg,2,2,combine_asl,test
+asl_clean_mini/test/2/combine_asl_hand2_2_top_seg_5_cropped.jpeg,2,2,combine_asl,test
+asl_clean_mini/test/2/combine_asl_hand5_2_bot_seg_3_cropped.jpeg,2,2,combine_asl,test
+asl_clean_mini/test/2/combine_asl_hand5_2_bot_seg_5_cropped.jpeg,2,2,combine_asl,test
+asl_clean_mini/test/3/asl_hg_raw_P3_3_300.jpg,3,3,asl_hg_raw,test
+asl_clean_mini/test/3/asl_hg_raw_P8_3_701.jpg,3,3,asl_hg_raw,test
+asl_clean_mini/test/3/asl_hg_raw_P8_3_750.jpg,3,3,asl_hg_raw,test
+asl_clean_mini/test/3/asl_hg_raw_P8_3_800.jpg,3,3,asl_hg_raw,test
+asl_clean_mini/test/4/asl_hg_raw_P2_4_150.jpg,4,4,asl_hg_raw,test
+asl_clean_mini/test/4/asl_hg_raw_P9_4_850.jpg,4,4,asl_hg_raw,test
+asl_clean_mini/test/4/combine_asl_hand2_4_left_seg_2_cropped.jpeg,4,4,combine_asl,test
+asl_clean_mini/test/4/combine_asl_hand2_4_left_seg_3_cropped.jpeg,4,4,combine_asl,test
+asl_clean_mini/test/4/combine_asl_hand2_4_left_seg_4_cropped.jpeg,4,4,combine_asl,test
+asl_clean_mini/test/4/combine_asl_hand2_4_left_seg_5_cropped.jpeg,4,4,combine_asl,test
+asl_clean_mini/test/4/combine_asl_hand4_4_bot_seg_4_cropped.jpeg,4,4,combine_asl,test
+asl_clean_mini/test/4/combine_asl_hand5_4_dif_seg_1_cropped.jpeg,4,4,combine_asl,test
+asl_clean_mini/test/4/combine_asl_hand5_4_dif_seg_2_cropped.jpeg,4,4,combine_asl,test
+asl_clean_mini/test/4/combine_asl_hand5_4_dif_seg_3_cropped.jpeg,4,4,combine_asl,test
+asl_clean_mini/test/5/asl_hg_raw_P1_5_100.jpg,5,5,asl_hg_raw,test
+asl_clean_mini/test/5/asl_hg_raw_P2_5_150.jpg,5,5,asl_hg_raw,test
+asl_clean_mini/test/5/combine_asl_hand1_5_bot_seg_3_cropped.jpeg,5,5,combine_asl,test
+asl_clean_mini/test/5/combine_asl_hand1_5_bot_seg_4_cropped.jpeg,5,5,combine_asl,test
+asl_clean_mini/test/5/combine_asl_hand4_5_bot_seg_3_cropped.jpeg,5,5,combine_asl,test
+asl_clean_mini/test/6/asl_hg_raw_P2_6_101.jpg,6,6,asl_hg_raw,test
+asl_clean_mini/test/6/combine_asl_hand1_6_bot_seg_4_cropped.jpeg,6,6,combine_asl,test
+asl_clean_mini/test/6/combine_asl_hand1_6_left_seg_2_cropped.jpeg,6,6,combine_asl,test
+asl_clean_mini/test/6/combine_asl_hand1_6_left_seg_3_cropped.jpeg,6,6,combine_asl,test
+asl_clean_mini/test/6/combine_asl_hand1_6_left_seg_4_cropped.jpeg,6,6,combine_asl,test
+asl_clean_mini/test/6/combine_asl_hand1_6_right_seg_2_cropped.jpeg,6,6,combine_asl,test
+asl_clean_mini/test/6/combine_asl_hand1_6_right_seg_3_cropped.jpeg,6,6,combine_asl,test
+asl_clean_mini/test/6/combine_asl_hand1_6_top_seg_3_cropped.jpeg,6,6,combine_asl,test
+asl_clean_mini/test/6/combine_asl_hand2_6_left_seg_1_cropped.jpeg,6,6,combine_asl,test
+asl_clean_mini/test/6/combine_asl_hand2_6_left_seg_5_cropped.jpeg,6,6,combine_asl,test
+asl_clean_mini/test/7/asl_hg_raw_P10_7_1000.jpg,7,7,asl_hg_raw,test
+asl_clean_mini/test/7/asl_hg_raw_P10_7_950.jpg,7,7,asl_hg_raw,test
+asl_clean_mini/test/7/asl_hg_raw_P4_7_350.jpg,7,7,asl_hg_raw,test
+asl_clean_mini/test/7/asl_hg_raw_P5_7_500.jpg,7,7,asl_hg_raw,test
+asl_clean_mini/test/7/combine_asl_hand1_7_right_seg_1_cropped.jpeg,7,7,combine_asl,test
+asl_clean_mini/test/7/combine_asl_hand1_7_right_seg_2_cropped.jpeg,7,7,combine_asl,test
+asl_clean_mini/test/7/combine_asl_hand1_7_right_seg_3_cropped.jpeg,7,7,combine_asl,test
+asl_clean_mini/test/7/combine_asl_hand1_7_right_seg_5_cropped.jpeg,7,7,combine_asl,test
+asl_clean_mini/test/7/combine_asl_hand4_7_bot_seg_2_cropped.jpeg,7,7,combine_asl,test
+asl_clean_mini/test/7/combine_asl_hand4_7_bot_seg_3_cropped.jpeg,7,7,combine_asl,test
+asl_clean_mini/test/8/asl_hg_raw_P9_8_801.jpg,8,8,asl_hg_raw,test
+asl_clean_mini/test/8/asl_hg_raw_P9_8_850.jpg,8,8,asl_hg_raw,test
+asl_clean_mini/test/8/asl_hg_raw_P9_8_900.jpg,8,8,asl_hg_raw,test
+asl_clean_mini/test/8/combine_asl_hand1_8_dif_seg_1_cropped.jpeg,8,8,combine_asl,test
+asl_clean_mini/test/8/combine_asl_hand1_8_dif_seg_2_cropped.jpeg,8,8,combine_asl,test
+asl_clean_mini/test/8/combine_asl_hand1_8_dif_seg_3_cropped.jpeg,8,8,combine_asl,test
+asl_clean_mini/test/8/combine_asl_hand2_8_bot_seg_1_cropped.jpeg,8,8,combine_asl,test
+asl_clean_mini/test/8/combine_asl_hand2_8_bot_seg_3_cropped.jpeg,8,8,combine_asl,test
+asl_clean_mini/test/8/combine_asl_hand2_8_bot_seg_4_cropped.jpeg,8,8,combine_asl,test
+asl_clean_mini/test/8/combine_asl_hand2_8_bot_seg_5_cropped.jpeg,8,8,combine_asl,test
+asl_clean_mini/test/9/asl_hg_raw_P10_9_1000.jpg,9,9,asl_hg_raw,test
+asl_clean_mini/test/9/asl_hg_raw_P10_9_950.jpg,9,9,asl_hg_raw,test
+asl_clean_mini/test/9/asl_hg_raw_P1_9_100.jpg,9,9,asl_hg_raw,test
+asl_clean_mini/test/9/asl_hg_raw_P1_9_50.jpg,9,9,asl_hg_raw,test
+asl_clean_mini/test/9/asl_hg_raw_P3_9_300.jpg,9,9,asl_hg_raw,test
+asl_clean_mini/test/9/asl_hg_raw_P4_9_301.jpg,9,9,asl_hg_raw,test
+asl_clean_mini/test/9/combine_asl_hand4_9_bot_seg_5_cropped.jpeg,9,9,combine_asl,test
+asl_clean_mini/test/9/combine_asl_hand5_9_bot_seg_1_cropped.jpeg,9,9,combine_asl,test
+asl_clean_mini/test/9/combine_asl_hand5_9_bot_seg_2_cropped.jpeg,9,9,combine_asl,test
+asl_clean_mini/test/9/combine_asl_hand5_9_bot_seg_5_cropped.jpeg,9,9,combine_asl,test
+asl_clean_mini/test/A/asl_alphabet_A1120.jpg,10,A,asl_alphabet,test
+asl_clean_mini/test/A/asl_alphabet_A120.jpg,10,A,asl_alphabet,test
+asl_clean_mini/test/A/asl_alphabet_A140.jpg,10,A,asl_alphabet,test
+asl_clean_mini/test/A/asl_alphabet_A1420.jpg,10,A,asl_alphabet,test
+asl_clean_mini/test/A/asl_alphabet_A1620.jpg,10,A,asl_alphabet,test
+asl_clean_mini/test/A/asl_alphabet_A1900.jpg,10,A,asl_alphabet,test
+asl_clean_mini/test/A/asl_alphabet_A2660.jpg,10,A,asl_alphabet,test
+asl_clean_mini/test/A/asl_alphabet_A2980.jpg,10,A,asl_alphabet,test
+asl_clean_mini/test/A/combine_asl_hand1_a_dif_seg_3_cropped.jpeg,10,A,combine_asl,test
+asl_clean_mini/test/A/combine_asl_hand2_a_bot_seg_3_cropped.jpeg,10,A,combine_asl,test
+asl_clean_mini/test/B/asl_alphabet_B2420.jpg,11,B,asl_alphabet,test
+asl_clean_mini/test/B/asl_alphabet_B2800.jpg,11,B,asl_alphabet,test
+asl_clean_mini/test/B/asl_alphabet_B2880.jpg,11,B,asl_alphabet,test
+asl_clean_mini/test/B/asl_alphabet_B680.jpg,11,B,asl_alphabet,test
+asl_clean_mini/test/B/asl_hg_raw_P4_B_301.jpg,11,B,asl_hg_raw,test
+asl_clean_mini/test/B/asl_hg_raw_P5_B_500.jpg,11,B,asl_hg_raw,test
+asl_clean_mini/test/B/combine_asl_hand1_b_bot_seg_2_cropped.jpeg,11,B,combine_asl,test
+asl_clean_mini/test/B/combine_asl_hand1_b_bot_seg_3_cropped.jpeg,11,B,combine_asl,test
+asl_clean_mini/test/B/combine_asl_hand4_b_bot_seg_4_cropped.jpeg,11,B,combine_asl,test
+asl_clean_mini/test/B/combine_asl_hand4_b_bot_seg_5_cropped.jpeg,11,B,combine_asl,test
+asl_clean_mini/test/C/asl_alphabet_C1140.jpg,12,C,asl_alphabet,test
+asl_clean_mini/test/C/asl_alphabet_C1360.jpg,12,C,asl_alphabet,test
+asl_clean_mini/test/C/asl_alphabet_C2020.jpg,12,C,asl_alphabet,test
+asl_clean_mini/test/C/asl_alphabet_C260.jpg,12,C,asl_alphabet,test
+asl_clean_mini/test/C/asl_alphabet_C2900.jpg,12,C,asl_alphabet,test
+asl_clean_mini/test/C/asl_alphabet_C780.jpg,12,C,asl_alphabet,test
+asl_clean_mini/test/C/asl_alphabet_C820.jpg,12,C,asl_alphabet,test
+asl_clean_mini/test/C/asl_alphabet_C920.jpg,12,C,asl_alphabet,test
+asl_clean_mini/test/C/asl_hg_raw_P3_C_250.jpg,12,C,asl_hg_raw,test
+asl_clean_mini/test/C/asl_hg_raw_P8_C_701.jpg,12,C,asl_hg_raw,test
+asl_clean_mini/test/D/asl_alphabet_D1040.jpg,13,D,asl_alphabet,test
+asl_clean_mini/test/D/asl_alphabet_D1260.jpg,13,D,asl_alphabet,test
+asl_clean_mini/test/D/asl_alphabet_D2020.jpg,13,D,asl_alphabet,test
+asl_clean_mini/test/D/asl_alphabet_D2240.jpg,13,D,asl_alphabet,test
+asl_clean_mini/test/D/asl_alphabet_D2360.jpg,13,D,asl_alphabet,test
+asl_clean_mini/test/D/asl_alphabet_D2560.jpg,13,D,asl_alphabet,test
+asl_clean_mini/test/D/asl_alphabet_D400.jpg,13,D,asl_alphabet,test
+asl_clean_mini/test/D/asl_alphabet_D80.jpg,13,D,asl_alphabet,test
+asl_clean_mini/test/D/asl_hg_raw_P4_D_301.jpg,13,D,asl_hg_raw,test
+asl_clean_mini/test/D/asl_hg_raw_P4_D_400.jpg,13,D,asl_hg_raw,test
+asl_clean_mini/test/E/asl_alphabet_E120.jpg,14,E,asl_alphabet,test
+asl_clean_mini/test/E/asl_alphabet_E1520.jpg,14,E,asl_alphabet,test
+asl_clean_mini/test/E/asl_alphabet_E160.jpg,14,E,asl_alphabet,test
+asl_clean_mini/test/E/asl_alphabet_E2180.jpg,14,E,asl_alphabet,test
+asl_clean_mini/test/E/asl_alphabet_E260.jpg,14,E,asl_alphabet,test
+asl_clean_mini/test/E/asl_alphabet_E2980.jpg,14,E,asl_alphabet,test
+asl_clean_mini/test/E/combine_asl_hand2_e_dif_seg_3_cropped.jpeg,14,E,combine_asl,test
+asl_clean_mini/test/E/combine_asl_hand2_e_dif_seg_4_cropped.jpeg,14,E,combine_asl,test
+asl_clean_mini/test/E/combine_asl_hand2_e_dif_seg_5_cropped.jpeg,14,E,combine_asl,test
+asl_clean_mini/test/E/combine_asl_hand4_e_bot_seg_5_cropped.jpeg,14,E,combine_asl,test
+asl_clean_mini/test/F/asl_alphabet_F1080.jpg,15,F,asl_alphabet,test
+asl_clean_mini/test/F/asl_alphabet_F1360.jpg,15,F,asl_alphabet,test
+asl_clean_mini/test/F/asl_alphabet_F1520.jpg,15,F,asl_alphabet,test
+asl_clean_mini/test/F/asl_alphabet_F420.jpg,15,F,asl_alphabet,test
+asl_clean_mini/test/F/asl_alphabet_F720.jpg,15,F,asl_alphabet,test
+asl_clean_mini/test/F/asl_hg_raw_P7_F_601.jpg,15,F,asl_hg_raw,test
+asl_clean_mini/test/F/asl_hg_raw_P7_F_650.jpg,15,F,asl_hg_raw,test
+asl_clean_mini/test/F/combine_asl_F52.jpg,15,F,combine_asl,test
+asl_clean_mini/test/F/combine_asl_hand2_f_right_seg_1_cropped.jpeg,15,F,combine_asl,test
+asl_clean_mini/test/F/combine_asl_hand5_f_dif_seg_1_cropped.jpeg,15,F,combine_asl,test
+asl_clean_mini/test/G/asl_hg_raw_P10_G_1000.jpg,16,G,asl_hg_raw,test
+asl_clean_mini/test/G/asl_hg_raw_P2_G_101.jpg,16,G,asl_hg_raw,test
+asl_clean_mini/test/G/combine_asl_color_6_0198 (5).png,16,G,combine_asl,test
+asl_clean_mini/test/G/combine_asl_color_6_0215 (2).png,16,G,combine_asl,test
+asl_clean_mini/test/G/combine_asl_color_6_0223.png,16,G,combine_asl,test
+asl_clean_mini/test/G/combine_asl_color_6_0239 (4).png,16,G,combine_asl,test
+asl_clean_mini/test/G/combine_asl_color_6_0306 (4).png,16,G,combine_asl,test
+asl_clean_mini/test/G/combine_asl_color_6_0409 (3).png,16,G,combine_asl,test
+asl_clean_mini/test/G/combine_asl_hand3_g_dif_seg_2_cropped.jpeg,16,G,combine_asl,test
+asl_clean_mini/test/G/combine_asl_hand3_g_dif_seg_4_cropped.jpeg,16,G,combine_asl,test
+asl_clean_mini/test/H/combine_asl_color_7_0108 (3).png,17,H,combine_asl,test
+asl_clean_mini/test/H/combine_asl_H1021.jpg,17,H,combine_asl,test
+asl_clean_mini/test/H/combine_asl_H1763.jpg,17,H,combine_asl,test
+asl_clean_mini/test/H/combine_asl_H1963.jpg,17,H,combine_asl,test
+asl_clean_mini/test/H/combine_asl_H211.jpg,17,H,combine_asl,test
+asl_clean_mini/test/H/combine_asl_H2216.jpg,17,H,combine_asl,test
+asl_clean_mini/test/H/combine_asl_H237.jpg,17,H,combine_asl,test
+asl_clean_mini/test/H/combine_asl_H252.jpg,17,H,combine_asl,test
+asl_clean_mini/test/H/combine_asl_H4 (6).jpg,17,H,combine_asl,test
+asl_clean_mini/test/H/combine_asl_H5.jpg,17,H,combine_asl,test
+asl_clean_mini/test/I/combine_asl_ckaisei2.png,18,I,combine_asl,test
+asl_clean_mini/test/I/combine_asl_color_8_0029 (3).png,18,I,combine_asl,test
+asl_clean_mini/test/I/combine_asl_color_8_0042 (4).png,18,I,combine_asl,test
+asl_clean_mini/test/I/combine_asl_color_8_0119 (4).png,18,I,combine_asl,test
+asl_clean_mini/test/I/combine_asl_color_8_0139.png,18,I,combine_asl,test
+asl_clean_mini/test/I/combine_asl_color_8_0315 (2).png,18,I,combine_asl,test
+asl_clean_mini/test/I/combine_asl_color_8_0402 (5).png,18,I,combine_asl,test
+asl_clean_mini/test/I/combine_asl_color_8_0405 (3).png,18,I,combine_asl,test
+asl_clean_mini/test/I/combine_asl_I1123.jpg,18,I,combine_asl,test
+asl_clean_mini/test/I/combine_asl_I2081.jpg,18,I,combine_asl,test
+asl_clean_mini/test/J/asl_alphabet_J1340.jpg,19,J,asl_alphabet,test
+asl_clean_mini/test/J/combine_asl_13.jpg,19,J,combine_asl,test
+asl_clean_mini/test/J/combine_asl_17.png,19,J,combine_asl,test
+asl_clean_mini/test/J/combine_asl_J1040.jpg,19,J,combine_asl,test
+asl_clean_mini/test/J/combine_asl_J1319.jpg,19,J,combine_asl,test
+asl_clean_mini/test/J/combine_asl_J1321.jpg,19,J,combine_asl,test
+asl_clean_mini/test/J/combine_asl_J2440.jpg,19,J,combine_asl,test
+asl_clean_mini/test/J/combine_asl_J2596.jpg,19,J,combine_asl,test
+asl_clean_mini/test/J/combine_asl_J2619.jpg,19,J,combine_asl,test
+asl_clean_mini/test/J/combine_asl_J702.jpg,19,J,combine_asl,test
+asl_clean_mini/test/K/asl_hg_raw_P10_K_901.jpg,20,K,asl_hg_raw,test
+asl_clean_mini/test/K/combine_asl_color_10_0020 (4).png,20,K,combine_asl,test
+asl_clean_mini/test/K/combine_asl_color_10_0112 (4).png,20,K,combine_asl,test
+asl_clean_mini/test/K/combine_asl_color_10_0189 (4).png,20,K,combine_asl,test
+asl_clean_mini/test/K/combine_asl_color_10_0202.png,20,K,combine_asl,test
+asl_clean_mini/test/K/combine_asl_color_10_0531 (4).png,20,K,combine_asl,test
+asl_clean_mini/test/K/combine_asl_color_10_0748.png,20,K,combine_asl,test
+asl_clean_mini/test/K/combine_asl_hand2_k_top_seg_5_cropped.jpeg,20,K,combine_asl,test
+asl_clean_mini/test/K/combine_asl_K1102.jpg,20,K,combine_asl,test
+asl_clean_mini/test/K/combine_asl_K422.jpg,20,K,combine_asl,test
+asl_clean_mini/test/L/asl_hg_raw_P4_L_350.jpg,21,L,asl_hg_raw,test
+asl_clean_mini/test/L/combine_asl_color_11_0024 (4).png,21,L,combine_asl,test
+asl_clean_mini/test/L/combine_asl_color_11_0095 (3).png,21,L,combine_asl,test
+asl_clean_mini/test/L/combine_asl_color_11_0223 (2).png,21,L,combine_asl,test
+asl_clean_mini/test/L/combine_asl_color_11_0238 (4).png,21,L,combine_asl,test
+asl_clean_mini/test/L/combine_asl_L2342.jpg,21,L,combine_asl,test
+asl_clean_mini/test/L/combine_asl_L2371.jpg,21,L,combine_asl,test
+asl_clean_mini/test/L/combine_asl_L2452.jpg,21,L,combine_asl,test
+asl_clean_mini/test/L/combine_asl_L2776.jpg,21,L,combine_asl,test
+asl_clean_mini/test/L/combine_asl_L2786.jpg,21,L,combine_asl,test
+asl_clean_mini/test/M/asl_alphabet_M2400.jpg,22,M,asl_alphabet,test
+asl_clean_mini/test/M/combine_asl_color_12_0025 (4).png,22,M,combine_asl,test
+asl_clean_mini/test/M/combine_asl_color_12_0200 (5).png,22,M,combine_asl,test
+asl_clean_mini/test/M/combine_asl_color_12_0217 (3).png,22,M,combine_asl,test
+asl_clean_mini/test/M/combine_asl_color_12_0243 (3).png,22,M,combine_asl,test
+asl_clean_mini/test/M/combine_asl_color_12_0345 (5).png,22,M,combine_asl,test
+asl_clean_mini/test/M/combine_asl_color_12_0502 (5).png,22,M,combine_asl,test
+asl_clean_mini/test/M/combine_asl_hand1_m_left_seg_2_cropped.png,22,M,combine_asl,test
+asl_clean_mini/test/M/combine_asl_hand2_m_right_seg_1_cropped.jpeg,22,M,combine_asl,test
+asl_clean_mini/test/M/combine_asl_M3 (5).jpg,22,M,combine_asl,test
+asl_clean_mini/test/N/asl_alphabet_N120.jpg,23,N,asl_alphabet,test
+asl_clean_mini/test/N/asl_alphabet_N1780.jpg,23,N,asl_alphabet,test
+asl_clean_mini/test/N/combine_asl_color_13_0063 (2).png,23,N,combine_asl,test
+asl_clean_mini/test/N/combine_asl_color_13_0183 (5).png,23,N,combine_asl,test
+asl_clean_mini/test/N/combine_asl_color_13_0202 (3).png,23,N,combine_asl,test
+asl_clean_mini/test/N/combine_asl_color_13_0204 (4).png,23,N,combine_asl,test
+asl_clean_mini/test/N/combine_asl_color_13_0318 (2).png,23,N,combine_asl,test
+asl_clean_mini/test/N/combine_asl_color_13_0327.png,23,N,combine_asl,test
+asl_clean_mini/test/N/combine_asl_color_13_0421.png,23,N,combine_asl,test
+asl_clean_mini/test/N/combine_asl_hand2_n_right_seg_1_cropped.jpeg,23,N,combine_asl,test
+asl_clean_mini/test/nothing/asl_alphabet_nothing1100.jpg,36,nothing,asl_alphabet,test
+asl_clean_mini/test/nothing/asl_alphabet_nothing1300.jpg,36,nothing,asl_alphabet,test
+asl_clean_mini/test/nothing/asl_alphabet_nothing1800.jpg,36,nothing,asl_alphabet,test
+asl_clean_mini/test/nothing/asl_alphabet_nothing2160.jpg,36,nothing,asl_alphabet,test
+asl_clean_mini/test/nothing/asl_alphabet_nothing2820.jpg,36,nothing,asl_alphabet,test
+asl_clean_mini/test/nothing/asl_alphabet_nothing500.jpg,36,nothing,asl_alphabet,test
+asl_clean_mini/test/nothing/asl_alphabet_nothing700.jpg,36,nothing,asl_alphabet,test
+asl_clean_mini/test/nothing/asl_alphabet_nothing740.jpg,36,nothing,asl_alphabet,test
+asl_clean_mini/test/nothing/asl_alphabet_nothing780.jpg,36,nothing,asl_alphabet,test
+asl_clean_mini/test/nothing/asl_alphabet_nothing800.jpg,36,nothing,asl_alphabet,test
+asl_clean_mini/test/O/combine_asl_color_14_0225 (3).png,24,O,combine_asl,test
+asl_clean_mini/test/O/combine_asl_color_14_0297 (5).png,24,O,combine_asl,test
+asl_clean_mini/test/O/combine_asl_color_14_0302 (4).png,24,O,combine_asl,test
+asl_clean_mini/test/O/combine_asl_color_14_0327 (5).png,24,O,combine_asl,test
+asl_clean_mini/test/O/combine_asl_color_14_0475 (3).png,24,O,combine_asl,test
+asl_clean_mini/test/O/combine_asl_hand1_o_right_seg_3_cropped.jpeg,24,O,combine_asl,test
+asl_clean_mini/test/O/combine_asl_O1175.jpg,24,O,combine_asl,test
+asl_clean_mini/test/O/combine_asl_O1521.jpg,24,O,combine_asl,test
+asl_clean_mini/test/O/combine_asl_O1754.jpg,24,O,combine_asl,test
+asl_clean_mini/test/O/combine_asl_O1757.jpg,24,O,combine_asl,test
+asl_clean_mini/test/P/asl_alphabet_P2580.jpg,25,P,asl_alphabet,test
+asl_clean_mini/test/P/combine_asl_color_15_0007 (5).png,25,P,combine_asl,test
+asl_clean_mini/test/P/combine_asl_color_15_0007.png,25,P,combine_asl,test
+asl_clean_mini/test/P/combine_asl_color_15_0088 (3).png,25,P,combine_asl,test
+asl_clean_mini/test/P/combine_asl_color_15_0383 (2).png,25,P,combine_asl,test
+asl_clean_mini/test/P/combine_asl_color_15_0531 (4).png,25,P,combine_asl,test
+asl_clean_mini/test/P/combine_asl_P2580.jpg,25,P,combine_asl,test
+asl_clean_mini/test/P/combine_asl_P2583.jpg,25,P,combine_asl,test
+asl_clean_mini/test/P/combine_asl_P2601.jpg,25,P,combine_asl,test
+asl_clean_mini/test/P/combine_asl_P531.jpg,25,P,combine_asl,test
+asl_clean_mini/test/Q/asl_alphabet_Q580.jpg,26,Q,asl_alphabet,test
+asl_clean_mini/test/Q/combine_asl_color_16_0171 (4).png,26,Q,combine_asl,test
+asl_clean_mini/test/Q/combine_asl_color_16_0236 (2).png,26,Q,combine_asl,test
+asl_clean_mini/test/Q/combine_asl_color_16_0329 (3).png,26,Q,combine_asl,test
+asl_clean_mini/test/Q/combine_asl_color_16_0357 (4).png,26,Q,combine_asl,test
+asl_clean_mini/test/Q/combine_asl_color_16_0454 (3).png,26,Q,combine_asl,test
+asl_clean_mini/test/Q/combine_asl_color_16_0517 (3).png,26,Q,combine_asl,test
+asl_clean_mini/test/Q/combine_asl_color_16_0549.png,26,Q,combine_asl,test
+asl_clean_mini/test/Q/combine_asl_Q2283.jpg,26,Q,combine_asl,test
+asl_clean_mini/test/Q/combine_asl_Q2634.jpg,26,Q,combine_asl,test
+asl_clean_mini/test/R/combine_asl_color_17_0014.png,27,R,combine_asl,test
+asl_clean_mini/test/R/combine_asl_color_17_0029 (3).png,27,R,combine_asl,test
+asl_clean_mini/test/R/combine_asl_color_17_0184 (2).png,27,R,combine_asl,test
+asl_clean_mini/test/R/combine_asl_color_17_0268.png,27,R,combine_asl,test
+asl_clean_mini/test/R/combine_asl_color_17_0306 (5).png,27,R,combine_asl,test
+asl_clean_mini/test/R/combine_asl_color_17_0318 (3).png,27,R,combine_asl,test
+asl_clean_mini/test/R/combine_asl_color_17_0324 (4).png,27,R,combine_asl,test
+asl_clean_mini/test/R/combine_asl_color_17_0393 (5).png,27,R,combine_asl,test
+asl_clean_mini/test/R/combine_asl_color_17_0448 (4).png,27,R,combine_asl,test
+asl_clean_mini/test/R/combine_asl_color_17_0464 (4).png,27,R,combine_asl,test
+asl_clean_mini/test/S/combine_asl_color_18_0097.png,28,S,combine_asl,test
+asl_clean_mini/test/S/combine_asl_color_18_0119.png,28,S,combine_asl,test
+asl_clean_mini/test/S/combine_asl_color_18_0163.png,28,S,combine_asl,test
+asl_clean_mini/test/S/combine_asl_color_18_0195.png,28,S,combine_asl,test
+asl_clean_mini/test/S/combine_asl_color_18_0255 (4).png,28,S,combine_asl,test
+asl_clean_mini/test/S/combine_asl_color_18_0292 (2).png,28,S,combine_asl,test
+asl_clean_mini/test/S/combine_asl_color_18_0293.png,28,S,combine_asl,test
+asl_clean_mini/test/S/combine_asl_color_18_0520 (2).png,28,S,combine_asl,test
+asl_clean_mini/test/S/combine_asl_S2396.jpg,28,S,combine_asl,test
+asl_clean_mini/test/S/combine_asl_S2510.jpg,28,S,combine_asl,test
+asl_clean_mini/test/T/combine_asl_color_19_0003.png,29,T,combine_asl,test
+asl_clean_mini/test/T/combine_asl_color_19_0026.png,29,T,combine_asl,test
+asl_clean_mini/test/T/combine_asl_color_19_0066 (4).png,29,T,combine_asl,test
+asl_clean_mini/test/T/combine_asl_color_19_0092.png,29,T,combine_asl,test
+asl_clean_mini/test/T/combine_asl_color_19_0110 (4).png,29,T,combine_asl,test
+asl_clean_mini/test/T/combine_asl_color_19_0117.png,29,T,combine_asl,test
+asl_clean_mini/test/T/combine_asl_color_19_0145.png,29,T,combine_asl,test
+asl_clean_mini/test/T/combine_asl_color_19_0324 (5).png,29,T,combine_asl,test
+asl_clean_mini/test/T/combine_asl_color_19_0414 (3).png,29,T,combine_asl,test
+asl_clean_mini/test/T/combine_asl_color_19_0439.png,29,T,combine_asl,test
+asl_clean_mini/test/U/combine_asl_color_20_0279 (3).png,30,U,combine_asl,test
+asl_clean_mini/test/U/combine_asl_color_20_0330 (2).png,30,U,combine_asl,test
+asl_clean_mini/test/U/combine_asl_color_20_0332 (2).png,30,U,combine_asl,test
+asl_clean_mini/test/U/combine_asl_color_20_0376 (5).png,30,U,combine_asl,test
+asl_clean_mini/test/U/combine_asl_color_20_0481.png,30,U,combine_asl,test
+asl_clean_mini/test/U/combine_asl_U0 (5).jpg,30,U,combine_asl,test
+asl_clean_mini/test/U/combine_asl_U2527.jpg,30,U,combine_asl,test
+asl_clean_mini/test/U/combine_asl_U2898.jpg,30,U,combine_asl,test
+asl_clean_mini/test/U/combine_asl_U524.jpg,30,U,combine_asl,test
+asl_clean_mini/test/U/combine_asl_U546.jpg,30,U,combine_asl,test
+asl_clean_mini/test/V/combine_asl_color_21_0118.png,31,V,combine_asl,test
+asl_clean_mini/test/V/combine_asl_color_21_0591.png,31,V,combine_asl,test
+asl_clean_mini/test/V/combine_asl_haloosv1.png,31,V,combine_asl,test
+asl_clean_mini/test/V/combine_asl_mpoetzv3.png,31,V,combine_asl,test
+asl_clean_mini/test/V/combine_asl_V200.jpg,31,V,combine_asl,test
+asl_clean_mini/test/V/combine_asl_V2084.jpg,31,V,combine_asl,test
+asl_clean_mini/test/V/combine_asl_V2821.jpg,31,V,combine_asl,test
+asl_clean_mini/test/V/combine_asl_V2903.jpg,31,V,combine_asl,test
+asl_clean_mini/test/V/combine_asl_V462.jpg,31,V,combine_asl,test
+asl_clean_mini/test/V/combine_asl_V705.jpg,31,V,combine_asl,test
+asl_clean_mini/test/W/combine_asl_color_22_0036 (2).png,32,W,combine_asl,test
+asl_clean_mini/test/W/combine_asl_color_22_0125 (5).png,32,W,combine_asl,test
+asl_clean_mini/test/W/combine_asl_color_22_0194 (5).png,32,W,combine_asl,test
+asl_clean_mini/test/W/combine_asl_color_22_0200.png,32,W,combine_asl,test
+asl_clean_mini/test/W/combine_asl_color_22_0219.png,32,W,combine_asl,test
+asl_clean_mini/test/W/combine_asl_color_22_0239 (4).png,32,W,combine_asl,test
+asl_clean_mini/test/W/combine_asl_color_22_0304 (3).png,32,W,combine_asl,test
+asl_clean_mini/test/W/combine_asl_color_22_0396 (2).png,32,W,combine_asl,test
+asl_clean_mini/test/W/combine_asl_color_22_0462 (3).png,32,W,combine_asl,test
+asl_clean_mini/test/W/combine_asl_color_22_0612 (2).png,32,W,combine_asl,test
+asl_clean_mini/test/X/combine_asl_color_23_0094 (2).png,33,X,combine_asl,test
+asl_clean_mini/test/X/combine_asl_color_23_0132 (5).png,33,X,combine_asl,test
+asl_clean_mini/test/X/combine_asl_color_23_0136 (2).png,33,X,combine_asl,test
+asl_clean_mini/test/X/combine_asl_color_23_0147 (4).png,33,X,combine_asl,test
+asl_clean_mini/test/X/combine_asl_color_23_0166.png,33,X,combine_asl,test
+asl_clean_mini/test/X/combine_asl_color_23_0236 (4).png,33,X,combine_asl,test
+asl_clean_mini/test/X/combine_asl_color_23_0376.png,33,X,combine_asl,test
+asl_clean_mini/test/X/combine_asl_color_23_0382 (4).png,33,X,combine_asl,test
+asl_clean_mini/test/X/combine_asl_color_23_0435.png,33,X,combine_asl,test
+asl_clean_mini/test/X/combine_asl_color_23_0476 (3).png,33,X,combine_asl,test
+asl_clean_mini/test/Y/combine_asl_color_24_0112 (3).png,34,Y,combine_asl,test
+asl_clean_mini/test/Y/combine_asl_color_24_0113 (4).png,34,Y,combine_asl,test
+asl_clean_mini/test/Y/combine_asl_color_24_0502 (4).png,34,Y,combine_asl,test
+asl_clean_mini/test/Y/combine_asl_Y126.jpg,34,Y,combine_asl,test
+asl_clean_mini/test/Y/combine_asl_Y186.jpg,34,Y,combine_asl,test
+asl_clean_mini/test/Y/combine_asl_Y428.jpg,34,Y,combine_asl,test
+asl_clean_mini/test/Y/combine_asl_Y50.jpg,34,Y,combine_asl,test
+asl_clean_mini/test/Y/combine_asl_Y75.jpg,34,Y,combine_asl,test
+asl_clean_mini/test/Y/combine_asl_Y850.jpg,34,Y,combine_asl,test
+asl_clean_mini/test/Y/combine_asl_Y851.jpg,34,Y,combine_asl,test
+asl_clean_mini/test/Z/asl_alphabet_Z2180.jpg,35,Z,asl_alphabet,test
+asl_clean_mini/test/Z/combine_asl_Z190.jpg,35,Z,combine_asl,test
+asl_clean_mini/test/Z/combine_asl_Z249.jpg,35,Z,combine_asl,test
+asl_clean_mini/test/Z/combine_asl_Z2529.jpg,35,Z,combine_asl,test
+asl_clean_mini/test/Z/combine_asl_Z2621.jpg,35,Z,combine_asl,test
+asl_clean_mini/test/Z/combine_asl_Z2688.jpg,35,Z,combine_asl,test
+asl_clean_mini/test/Z/combine_asl_Z2752.jpg,35,Z,combine_asl,test
+asl_clean_mini/test/Z/combine_asl_Z2992.jpg,35,Z,combine_asl,test
+asl_clean_mini/test/Z/combine_asl_Z502.jpg,35,Z,combine_asl,test
+asl_clean_mini/test/Z/combine_asl_Z550.jpg,35,Z,combine_asl,test
