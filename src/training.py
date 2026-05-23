@@ -70,7 +70,9 @@ class Trainer:
         class_weights: Optional[torch.Tensor] = None,
         # Misc
         num_classes: int = 37,
+        debug: bool = False,
     ):
+        self.debug = debug
         self.model = model.to(device)
         self.train_loader = train_loader
         self.val_loader = val_loader
@@ -178,19 +180,23 @@ class Trainer:
 
         self.optimizer.zero_grad()
 
-        # DEBUG: diagnose hang location
         import platform, sys
-        print(f"  [DEBUG] _train_epoch start | OS={platform.system()} | Python={sys.version.split()[0]}", flush=True)
-        print(f"  [DEBUG] DataLoader num_workers={self.train_loader.num_workers}  batch_size={self.train_loader.batch_size}", flush=True)
-        print(f"  [DEBUG] Creating iterator (if stuck here -> multiprocessing deadlock)...", flush=True)
+        if self.debug:
+            print(f"  [DEBUG] _train_epoch start | OS={platform.system()} | Python={sys.version.split()[0]}", flush=True)
+            print(f"  [DEBUG] DataLoader: num_workers={self.train_loader.num_workers}  batch_size={self.train_loader.batch_size}", flush=True)
+            print(f"  [DEBUG] Creating iterator (if stuck here -> multiprocessing deadlock)...", flush=True)
 
+        t_epoch_start = time.perf_counter()
         pbar = tqdm(self.train_loader, desc=f"  Train E{epoch}", leave=False)
 
-        print(f"  [DEBUG] Iterator created, entering batch loop...", flush=True)
+        if self.debug:
+            print(f"  [DEBUG] Iterator created in {time.perf_counter()-t_epoch_start:.2f}s, entering batch loop...", flush=True)
 
         for step, (inputs, labels) in enumerate(pbar):
-            if step == 0:
-                print(f"  [DEBUG] First batch received: inputs={tuple(inputs.shape)} labels={tuple(labels.shape)}", flush=True)
+            if self.debug and step == 0:
+                print(f"  [DEBUG] First batch in {time.perf_counter()-t_epoch_start:.2f}s | shape={tuple(inputs.shape)}", flush=True)
+            if self.debug and step == 1:
+                print(f"  [DEBUG] Second batch in {time.perf_counter()-t_epoch_start:.2f}s", flush=True)
             inputs = inputs.to(self.device, non_blocking=True)
             labels = labels.to(self.device, non_blocking=True)
 
@@ -226,11 +232,13 @@ class Trainer:
         return avg_loss, acc, macro_f1
 
     def _val_epoch(self):
-        print(f"  [DEBUG] _val_epoch start | num_workers={self.val_loader.num_workers}", flush=True)
+        if self.debug:
+            print(f"  [DEBUG] _val_epoch start | num_workers={self.val_loader.num_workers}", flush=True)
         val_loss, val_acc, val_f1, val_bal, _, _ = evaluate_model(
             self.model, self.val_loader, self.device, self.criterion
         )
-        print(f"  [DEBUG] _val_epoch done", flush=True)
+        if self.debug:
+            print(f"  [DEBUG] _val_epoch done", flush=True)
         return val_loss, val_acc, val_f1, val_bal
 
 

@@ -61,10 +61,14 @@ def _build_split_loader(
     persistent_workers: bool,
     shuffle: bool,
     drop_last: bool,
+    debug: bool = False,
 ) -> DataLoader:
     info = load_shard_info(split_dir)
     shard_paths = [str(split_dir / s) for s in info["shards"]]
     total = info["total"]
+
+    if debug:
+        print(f"  [DEBUG] _build_split_loader: split={split_dir.name} | shards={len(shard_paths)} | total={total} | num_workers={num_workers}", flush=True)
 
     dataset = (
         wds.WebDataset(shard_paths, shardshuffle=500 if shuffle else False,
@@ -104,14 +108,30 @@ def _build_raw_loader(
     persistent_workers: bool,
     shuffle: bool,
     drop_last: bool,
+    debug: bool = False,
+    segmentation_mode: SegMode = "none",
+    cache_dir: Optional[str] = None,
 ) -> DataLoader:
-    import platform
-    print(f"  [DEBUG] _build_raw_loader: csv={csv_path} | num_workers={num_workers} | pin_memory={pin_memory} | OS={platform.system()}", flush=True)
-    dataset = ASLDataset(csv_path, transform=transform, data_root=data_root)
-    print(f"  [DEBUG] Dataset loaded: {len(dataset)} samples", flush=True)
+    import platform, time as _time
+    if debug:
+        print(f"  [DEBUG] _build_raw_loader: csv={csv_path} | num_workers={num_workers} | pin_memory={pin_memory} | OS={platform.system()}", flush=True)
+
+    t0 = _time.perf_counter()
+    dataset = ASLDataset(
+        csv_path,
+        transform=transform,
+        data_root=data_root,
+        segmentation_mode=segmentation_mode,
+        cache_dir=cache_dir,
+    )
+    if debug:
+        print(f"  [DEBUG] ASLDataset built: {len(dataset)} samples in {_time.perf_counter()-t0:.3f}s | seg={segmentation_mode}", flush=True)
 
     pw = persistent_workers and num_workers > 0
     pf = prefetch_factor if num_workers > 0 else None
+
+    if debug:
+        print(f"  [DEBUG] DataLoader: batch_size={batch_size} | workers={num_workers} | persistent={pw} | pin_memory={pin_memory}", flush=True)
 
     return DataLoader(
         dataset,
@@ -143,6 +163,9 @@ def build_dataloaders(
     dataset_source: str = "shards",
     data_root: Optional[Union[str, pathlib.Path]] = None,
     splits_dir: Optional[Union[str, pathlib.Path]] = None,
+    debug: bool = False,
+    segmentation_mode: SegMode = "none",
+    cache_dir: Optional[str] = None,
 ) -> Tuple[DataLoader, DataLoader, DataLoader]:
     """
     Build train / val / test DataLoaders from either WebDataset shards or
@@ -184,17 +207,17 @@ def build_dataloaders(
         train_loader = _build_split_loader(
             shards_dir / "train", train_transform, batch_size, num_workers,
             pin_memory, prefetch_factor, persistent_workers,
-            shuffle=True, drop_last=True,
+            shuffle=True, drop_last=True, debug=debug,
         )
         val_loader = _build_split_loader(
             shards_dir / "val", eval_transform, batch_size, num_workers,
             pin_memory, prefetch_factor, persistent_workers,
-            shuffle=False, drop_last=False,
+            shuffle=False, drop_last=False, debug=debug,
         )
         test_loader = _build_split_loader(
             shards_dir / "test", eval_transform, batch_size, num_workers,
             pin_memory, prefetch_factor, persistent_workers,
-            shuffle=False, drop_last=False,
+            shuffle=False, drop_last=False, debug=debug,
         )
     else:
         if splits_dir is None:
@@ -209,16 +232,19 @@ def build_dataloaders(
             splits_dir / "train.csv", data_root, train_transform, batch_size, num_workers,
             pin_memory, prefetch_factor, persistent_workers,
             shuffle=True, drop_last=True,
+            debug=debug, segmentation_mode=segmentation_mode, cache_dir=cache_dir,
         )
         val_loader = _build_raw_loader(
             splits_dir / "val.csv", data_root, eval_transform, batch_size, num_workers,
             pin_memory, prefetch_factor, persistent_workers,
             shuffle=False, drop_last=False,
+            debug=debug, segmentation_mode=segmentation_mode, cache_dir=cache_dir,
         )
         test_loader = _build_raw_loader(
             splits_dir / "test.csv", data_root, eval_transform, batch_size, num_workers,
             pin_memory, prefetch_factor, persistent_workers,
             shuffle=False, drop_last=False,
+            debug=debug, segmentation_mode=segmentation_mode, cache_dir=cache_dir,
         )
 
     return train_loader, val_loader, test_loader
