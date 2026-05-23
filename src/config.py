@@ -116,6 +116,7 @@ class Config:
     training: TrainingConfig
     transfer: TransferConfig
     device: str = "cpu"
+    debug: bool = False
 
     @property
     def class_weight_source(self) -> pathlib.Path:
@@ -146,6 +147,7 @@ class Config:
             dataset_source=self.dataset_source,
             data_root=self.data_root,
             splits_dir=self.splits_dir,
+            debug=self.debug,
         )
 
 
@@ -275,4 +277,5 @@ def load_config(config_path: str = "configs/config.yaml") -> Config:
         training=train_cfg,
         transfer=transfer_cfg,
         device=device,
+        debug=raw.get("debug", False),
     )
