@@ -47,3 +47,6 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Cluster directory (self-contained HPC copy, not committed)
+cluster/

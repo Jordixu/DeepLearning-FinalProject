@@ -1,9 +1,6 @@
 # Environment is auto-detected by src/config.py:detect_env().
 # Override with the ASL_ENV env var: local | colab | kaggle
 
-# Set to true to enable [DEBUG] prints in dataset.py and training.py
-debug: false
-
 # ---------------------------------------------------------------------------
 # Paths per execution environment
 # ---------------------------------------------------------------------------

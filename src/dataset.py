@@ -9,16 +9,18 @@ Primary entry point: build_dataloaders(...)
 ASLDataset is kept for EDA / offline inspection and is also reused by the
 raw-image loading path.
 
-Shard format (per sample inside each tar):
-    {key}.jpg   -- JPEG image
-    {key}.cls   -- class_id as ASCII bytes (e.g. b"5")
+Shard formats (per sample inside each tar):
+    JPEG (default):  {key}.jpg + {key}.cls
+    Fast numpy:      {key}.npy + {key}.cls  (_info.json has "format": "npy")
 """
 
 import hashlib
+import io
 import json
 import pathlib
 from typing import Callable, Dict, List, Literal, Optional, Tuple, Union
 
+import numpy as np
 import pandas as pd
 import torch
 import webdataset as wds
@@ -51,6 +53,20 @@ def _decode_cls(raw) -> int:
     return int(str(raw).strip())
 
 
+class _NpyTransform:
+    """Deserialize a raw .npy bytes blob → PIL image → transform tensor.
+
+    Stored as a callable class so it is picklable by DataLoader workers.
+    """
+
+    def __init__(self, transform: Callable) -> None:
+        self.transform = transform
+
+    def __call__(self, data: bytes) -> torch.Tensor:
+        arr = np.load(io.BytesIO(data))   # uint8 (H, W, 3)
+        return self.transform(Image.fromarray(arr))
+
+
 def _build_split_loader(
     split_dir: pathlib.Path,
     transform: Callable,
@@ -66,18 +82,29 @@ def _build_split_loader(
     info = load_shard_info(split_dir)
     shard_paths = [str(split_dir / s) for s in info["shards"]]
     total = info["total"]
+    fmt = info.get("format", "jpeg")
 
     if debug:
-        print(f"  [DEBUG] _build_split_loader: split={split_dir.name} | shards={len(shard_paths)} | total={total} | num_workers={num_workers}", flush=True)
+        print(f"  [DEBUG] _build_split_loader: split={split_dir.name} | shards={len(shard_paths)} | total={total} | fmt={fmt} | num_workers={num_workers}", flush=True)
 
-    dataset = (
-        wds.WebDataset(shard_paths, shardshuffle=500 if shuffle else False,
-                       nodesplitter=wds.split_by_node)
-        .shuffle(1000 if shuffle else 0)
-        .decode("pil")
-        .to_tuple("jpg", "cls")
-        .map_tuple(transform, _decode_cls)
-    )
+    wds_base = wds.WebDataset(
+        shard_paths, shardshuffle=500 if shuffle else False,
+        nodesplitter=wds.split_by_node,
+    ).shuffle(1000 if shuffle else 0)
+
+    if fmt == "npy":
+        dataset = (
+            wds_base
+            .to_tuple("npy", "cls")
+            .map_tuple(_NpyTransform(transform), _decode_cls)
+        )
+    else:
+        dataset = (
+            wds_base
+            .decode("pil")
+            .to_tuple("jpg", "cls")
+            .map_tuple(transform, _decode_cls)
+        )
 
     n_batches = total // batch_size if drop_last else (total + batch_size - 1) // batch_size
 

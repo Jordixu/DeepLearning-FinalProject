@@ -71,6 +71,7 @@ class Trainer:
         # Misc
         num_classes: int = 37,
         debug: bool = False,
+        resume_from: Optional[str | pathlib.Path] = None,
     ):
         self.debug = debug
         self.model = model.to(device)
@@ -120,6 +121,24 @@ class Trainer:
             "epoch_time_s": [], "peak_gpu_mb": [],
         }
         self.best_val_f1 = -float("inf")
+        self._start_epoch = 1
+
+        if resume_from is not None:
+            self._load_resume(pathlib.Path(resume_from))
+
+    def _load_resume(self, ckpt_path: pathlib.Path):
+        ckpt = torch.load(ckpt_path, map_location=self.device)
+        self.model.load_state_dict(ckpt["model_state"])
+        self.optimizer.load_state_dict(ckpt["optimizer_state"])
+        self.scaler.load_state_dict(ckpt["scaler_state"])
+        if self.scheduler is not None and ckpt.get("scheduler_state") is not None:
+            self.scheduler.load_state_dict(ckpt["scheduler_state"])
+        self.history = ckpt["history"]
+        self.best_val_f1 = ckpt["best_val_f1"]
+        self.early_stopping.best = ckpt["es_best"]
+        self.early_stopping.counter = ckpt["es_counter"]
+        self._start_epoch = ckpt["epoch"] + 1
+        print(f"  Resumed from {ckpt_path.name} (epoch {ckpt['epoch']})")
 
     def train(self) -> Dict[str, List[float]]:
         print(f"\n{'='*60}")
@@ -127,7 +146,7 @@ class Trainer:
         print(f"  Device: {self.device}  |  AMP: {self.use_amp}  |  Epochs: {self.num_epochs}")
         print(f"{'='*60}")
 
-        for epoch in range(1, self.num_epochs + 1):
+        for epoch in range(self._start_epoch, self.num_epochs + 1):
             t0 = time.time()
             train_loss, train_acc, train_f1 = self._train_epoch(epoch)
             val_loss, val_acc, val_f1, val_bal = self._val_epoch()
@@ -162,6 +181,25 @@ class Trainer:
                 print(f"  New best val macro-F1={val_f1:.4f} - checkpoint saved")
 
             save_history(self.history, str(self.results_dir / "history.json"))
+
+            # Save resumable checkpoint every epoch
+            last_ckpt = {
+                "epoch": epoch,
+                "model_state": self.model.state_dict(),
+                "optimizer_state": self.optimizer.state_dict(),
+                "scaler_state": self.scaler.state_dict(),
+                "scheduler_state": self.scheduler.state_dict() if self.scheduler is not None else None,
+                "history": self.history,
+                "best_val_f1": self.best_val_f1,
+                "es_best": self.early_stopping.best,
+                "es_counter": self.early_stopping.counter,
+            }
+            torch.save(last_ckpt, str(self.ckpt_dir / "last.pt"))
+
+            # Save CSV history
+            n = len(self.history["train_loss"])
+            csv_df = pd.DataFrame({"epoch": list(range(1, n + 1)), **self.history})
+            csv_df.to_csv(str(self.results_dir / "history.csv"), index=False)
 
             if self.early_stopping.step(val_f1):
                 print(f"  Early stopping triggered at epoch {epoch}.")
