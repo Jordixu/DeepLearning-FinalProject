@@ -16,6 +16,10 @@ Dataset variants:
   full:   data/asl_clean/      + splits/asl_clean/       (full dataset, local only)
   shards: data/asl_shards/                               (WebDataset tars, cloud training)
 
+Split strategy:
+  Each source dataset is assigned to exactly one split (train/val/test) via
+  preprocessing.dataset_splits in config.yaml. No random splitting is performed.
+
 Colab usage:
   Call mount_drive() before load_config().
   Upload data/ to MyDrive/asl/ so that asl_shards/ sits at MyDrive/asl/asl_shards/.
@@ -68,11 +72,14 @@ class DataloaderConfig:
 class PreprocessingConfig:
     image_size: int = 224
     min_image_size: int = 32
-    phash_threshold: int = 5
-    phash_hash_size: int = 8
-    split_ratios: Dict[str, float] = field(default_factory=lambda: {"train": 0.70, "val": 0.15, "test": 0.15})
+    shard_size: int = 1000
     random_seed: int = 33
     cache_resized: bool = False
+    dataset_splits: Dict[str, str] = field(default_factory=lambda: {
+        "combine_asl": "train",
+        "asl_hg_raw": "val",
+        "asl_alphabet": "test",
+    })
 
 
 @dataclass
@@ -207,8 +214,10 @@ def load_config(config_path: str = "configs/config.yaml") -> Config:
         splits_dir = data_root / "splits" / "asl_clean"
 
     # Raw dataset paths (local only, used by data_unification.py + preprocessing.py)
+    # Resolved as absolute paths so callers don't need to know the CWD.
     raw_ds = raw.get("raw_datasets", {})
-    local_data_root = pathlib.Path(raw["paths"]["local"]["data_root"])
+    _project_root = config_path.resolve().parent.parent  # configs/ -> project root
+    local_data_root = _project_root / raw["paths"]["local"]["data_root"]
     raw_dataset_paths = {name: local_data_root / rel for name, rel in raw_ds.items()}
 
     classes = raw["classes"]
@@ -227,11 +236,14 @@ def load_config(config_path: str = "configs/config.yaml") -> Config:
     preproc_cfg = PreprocessingConfig(
         image_size=pp.get("image_size", 224),
         min_image_size=pp.get("min_image_size", 32),
-        phash_threshold=pp.get("phash_threshold", 5),
-        phash_hash_size=pp.get("phash_hash_size", 8),
-        split_ratios=pp.get("split_ratios", {"train": 0.70, "val": 0.15, "test": 0.15}),
+        shard_size=pp.get("shard_size", 1000),
         random_seed=pp.get("random_seed", 33),
         cache_resized=pp.get("cache_resized", False),
+        dataset_splits=pp.get("dataset_splits", {
+            "combine_asl": "train",
+            "asl_hg_raw": "val",
+            "asl_alphabet": "test",
+        }),
     )
 
     tr = raw.get("training", {})

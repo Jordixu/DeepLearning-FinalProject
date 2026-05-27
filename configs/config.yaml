@@ -13,7 +13,7 @@
 #     splits/asl_clean/{train,val,test}.csv           <- full manifests (local only)
 #
 # Cloud training:
-#   1. Run the local preprocessing pipeline to produce data/asl_shards/
+#   1. Run: python -m src.prepare_data     (produces data/asl_shards/)
 #   2. Upload data/ (or just asl_shards/) to your cloud storage
 #   3. Set dataset_variant: shards and update data_root below
 #
@@ -28,16 +28,16 @@ paths:
     results_root: results/
     checkpoints_root: checkpoints/
   colab:
-    data_root: /content/drive/MyDrive/asl/            # upload data/ here as MyDrive/asl/
-    results_root: /content/drive/MyDrive/asl/results/
-    checkpoints_root: /content/drive/MyDrive/asl/checkpoints/
+    data_root: /content/drive/MyDrive/asl/   # <- UPDATE
+    results_root: /content/drive/MyDrive/asl/results/ # <- UPDATE
+    checkpoints_root: /content/drive/MyDrive/asl/checkpoints/ # <- UPDATE
   kaggle:
-    data_root: /kaggle/input/asl-data/                # <- UPDATE to your dataset slug
-    results_root: /kaggle/working/results/
-    checkpoints_root: /kaggle/working/checkpoints/
+    data_root: /kaggle/input/asl-data/  # <- UPDATE
+    results_root: /kaggle/working/results/ # <- UPDATE
+    checkpoints_root: /kaggle/working/checkpoints/ # <- UPDATE
 
 # Raw dataset directories (relative to local data_root).
-# Only used by data_unification.py and preprocessing.py (local, no GPU).
+# Only used by prepare_data.py (local, no GPU).
 raw_datasets:
   combine_asl: "combine_asl_dataset/"
   asl_hg_raw: "ASL-HG American Sign Language Hand Gesture Image D/ASL-HG American Sign Language Hand Gesture Image D/ASL_HG_36000/ASL_Raw_Images/asl_dataset/"
@@ -54,7 +54,7 @@ shards_dir: asl_shards/
 #   mini:   data/asl_clean_mini/ + splits/asl_clean_mini/  (small sample, local dev/testing)
 #   full:   data/asl_clean/      + splits/asl_clean/       (full dataset, local only)
 #   shards: data/asl_shards/                               (WebDataset tars, cloud training)
-dataset_variant: mini
+dataset_variant: shards
 
 # Labels (37 classes: digits 0-9, letters A-Z, nothing)
 classes:
@@ -203,20 +203,20 @@ class_maps:
     "nothing": "nothing"
 
 # ---------------------------------------------------------------------------
-# Preprocessing (used by preprocessing.py and augmentation.py)
+# Preprocessing (used by prepare_data.py and augmentation.py)
 # ---------------------------------------------------------------------------
+# dataset_splits: assigns each source dataset to exactly one split.
+# Change the values (train/val/test) to reassign datasets.
 preprocessing:
   image_size: 224
   min_image_size: 32
-  phash_threshold: 5          # Hamming distance <= this -> near-duplicate
-  phash_hash_size: 8          # 64-bit pHash
-  shard_size: 1000            # images per tar shard (reorganize.py)
-  split_ratios:
-    train: 0.70
-    val: 0.15
-    test: 0.15
+  shard_size: 1000            # images per tar shard
   random_seed: 33
   cache_resized: false
+  dataset_splits:
+    combine_asl: train
+    asl_hg_raw: val
+    asl_alphabet: test
 
 # ---------------------------------------------------------------------------
 # Data loader (per environment)
@@ -254,7 +254,7 @@ training:
   use_amp: true
   use_weighted_sampler: false
   use_class_weights: true
-  scheduler: cosine           # cosine | step | none
+  scheduler: cosine # cosine | step | none
   torch_compile: false
 
 # ---------------------------------------------------------------------------

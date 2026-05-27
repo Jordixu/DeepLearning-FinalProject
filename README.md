@@ -1,7 +1,7 @@
 # ASL Hand Gesture Classification
 
 Multi-source ASL recognition across 37 classes (digits 0-9, letters A-Z, and "nothing").
-Three source datasets are merged, deduplicated, and split into a unified training set.
+Three source datasets are unified into a single pipeline where each dataset maps to one split.
 
 ## Repository structure
 
@@ -12,16 +12,14 @@ experiments/    one Jupyter notebook per experiment
 results/        training logs and plots (gitignored)
 checkpoints/    saved model weights (gitignored)
 src/
-  config.py           config loader, environment detection
-  dataset.py          DataLoaders for all three dataset variants
-  augmentation.py     train and eval transforms
-  model.py            BaselineCNN, DeepCNN, transfer learning wrappers
-  training.py         Trainer class with AMP, early stopping, logging
-  preprocessing.py    deduplication and stratified split (local)
-  data_unification.py merges the three raw sources into manifest_raw.csv (local)
-  reorganize.py       converts split CSVs into WebDataset tar shards (local)
-  utils.py            seeding, visualization, model persistence, evaluation
-  eda.ipynb           exploratory data analysis
+  config.py       config loader, environment detection
+  dataset.py      DataLoaders for all three dataset variants
+  augmentation.py train and eval transforms
+  model.py        BaselineCNN, DeepCNN, transfer learning wrappers
+  training.py     Trainer class with AMP, early stopping, logging
+  prepare_data.py full data preparation pipeline: unify → validate → split → shard (local)
+  utils.py        seeding, visualization, model persistence, evaluation
+  eda.ipynb       exploratory data analysis
 ```
 
 ## Datasets
@@ -36,33 +34,31 @@ There are three variants. Switch between them by changing `dataset_variant` in `
 
 The mini dataset is a small sample committed to the repo. The full dataset and shards are local-only and must be generated from the raw sources using the pipeline below.
 
-## Local preprocessing pipeline (no GPU needed)
+## Local data preparation pipeline (no GPU needed)
 
-These steps are run once on a local machine.
+Run once on a local machine. The single script handles all steps.
 
-1. **Unify sources** - merges the three raw datasets into a single manifest
+```sh
+python -m src.prepare_data
+```
 
-   ```sh
-   python src/data_unification.py
-   ```
+Outputs:
 
-   Output: `data/manifest_raw.csv`
+- `data/manifest_raw.csv` — unified image manifest
+- `data/splits/asl_clean/{train,val,test}.csv` — per-split manifests
+- `data/preprocessing_report.json` — validation statistics
+- `data/asl_shards/{train,val,test}/*.tar` — WebDataset shards for cloud training
 
-2. **Preprocess** - validates images, deduplicates with pHash, and does a stratified split
+**Split strategy:** each source dataset is assigned to exactly one split via
+`preprocessing.dataset_splits` in `configs/config.yaml` — no random splitting.
+The default assignment is `combine_asl → train`, `asl_hg_raw → val`, `asl_alphabet → test`.
 
-   ```sh
-   python src/preprocessing.py
-   ```
+Optional flags:
 
-   Output: `data/splits/asl_clean/{train,val,test}.csv`
-
-3. **Shard** - packs the split into WebDataset tar files for fast cloud I/O
-
-   ```sh
-   python src/reorganize.py
-   ```
-
-   Output: `data/asl_shards/{train,val,test}/*.tar`
+```sh
+python -m src.prepare_data --skip_shards   # stop after writing split CSVs
+python -m src.prepare_data --dry_run       # print stats without writing anything
+```
 
 ## Cloud training (Colab or Kaggle)
 

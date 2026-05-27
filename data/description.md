@@ -43,7 +43,7 @@ All four scripts apply the same rule: **keep only if `(width, height) == (400, 4
 - `ASL_Raw_Images/asl_dataset/` - original unprocessed images; flat class-folder layout
 - `ASL_Processed_Images/asl_processed/` - MediaPipe-segmented, pre-made 80/20 train/test split (**not used in this project**)
 
-**Only the raw variant is used.** The processed variant is excluded because we run our own unified split (group-aware, dedup-aware) across all three datasets.
+**Only the raw variant is used.** The processed variant is excluded because each source dataset is assigned to exactly one split via `prepare_data.py`, so we control train/val/test boundaries at the dataset level rather than relying on pre-made splits.
 
 ### Images excluded - `delete_asl_files.py`
 

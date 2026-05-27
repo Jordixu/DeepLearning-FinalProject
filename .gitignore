@@ -5,6 +5,10 @@ data/archive (2)/
 data/manifest_raw.csv
 data/dedup_report.json
 data/asl_clean.zip
+data/archive (2).zip
+data/combine_asl_dataset.zip
+data/combine_asl_dataset_x/
+data/dataset_extra/
 
 # Full cleaned dataset and shards (large, local-only)
 data/asl_clean/
