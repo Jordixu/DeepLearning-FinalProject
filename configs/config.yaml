@@ -57,6 +57,7 @@ shards_dir: asl_shards/
 dataset_variant: shards
 
 # Labels (37 classes: digits 0-9, letters A-Z, nothing)
+# All three source datasets now cover all 37 classes.
 classes:
   - "0"
   - "1"
@@ -136,6 +137,7 @@ class_maps:
     "x": "X"
     "y": "Y"
     "z": "Z"
+    "nothing": "nothing"
   asl_hg_raw:
     "0": "0"
     "1": "1"
@@ -173,7 +175,18 @@ class_maps:
     "X": "X"
     "Y": "Y"
     "Z": "Z"
+    "nothing": "nothing"
   asl_alphabet:
+    "0": "0"
+    "1": "1"
+    "2": "2"
+    "3": "3"
+    "4": "4"
+    "5": "5"
+    "6": "6"
+    "7": "7"
+    "8": "8"
+    "9": "9"
     "A": "A"
     "B": "B"
     "C": "C"
