@@ -245,7 +245,7 @@ def _add_bytes(tar: tarfile.TarFile, name: str, data: bytes) -> None:
 def _write_shard(shard_path: pathlib.Path, samples: list, start_idx: int) -> int:
     written = 0
     with tarfile.open(shard_path, "w") as tar:
-        for i, (src, class_id) in enumerate(samples):
+        for i, (src, class_id) in enumerate(tqdm(samples, desc=f"  {shard_path.stem}", leave=False)):
             key = f"{start_idx + i:08d}"
             try:
                 img_bytes = _to_jpeg_bytes(src)
@@ -316,7 +316,7 @@ def _pack_shards(cfg: Config, splits_dir: pathlib.Path, shard_size: int) -> None
 # Main
 # ---------------------------------------------------------------------------
 
-def prepare(cfg: Config, skip_shards: bool = False, dry_run: bool = False) -> None:
+def prepare(cfg: Config, skip_shards: bool = False, dry_run: bool = False, skip_validation: bool = False) -> None:
     pp = cfg.preprocessing
     manifest_path = cfg.data_root / "manifest_raw.csv"
     splits_dir = cfg.splits_dir
@@ -330,8 +330,12 @@ def prepare(cfg: Config, skip_shards: bool = False, dry_run: bool = False) -> No
 
     print("\n" + "=" * 60)
     print("Step 2: Validating images...")
-    df, dropped = _validate_images(df, pp.min_image_size)
-    print(f"  Dropped (corrupt / too small): {len(dropped):,}  |  Remaining: {len(df):,}")
+    if skip_validation:
+        print("  Skipping validation (--skip_validation set).")
+        dropped = []
+    else:
+        df, dropped = _validate_images(df, pp.min_image_size)
+        print(f"  Dropped (corrupt / too small): {len(dropped):,}  |  Remaining: {len(df):,}")
 
     print("\n" + "=" * 60)
     print("Step 3: Assigning splits from config...")
@@ -368,10 +372,12 @@ def main() -> None:
                         help="Stop after writing split CSVs, skip sharding")
     parser.add_argument("--dry_run", action="store_true",
                         help="Print stats without writing any files")
+    parser.add_argument("--skip_validation", action="store_true",
+                        help="Skip image validation (faster, skips corrupt/small-file check)")
     args = parser.parse_args()
 
     cfg = load_config(args.config)
-    prepare(cfg, skip_shards=args.skip_shards, dry_run=args.dry_run)
+    prepare(cfg, skip_shards=args.skip_shards, dry_run=args.dry_run, skip_validation=args.skip_validation)
 
 
 if __name__ == "__main__":
