@@ -13,6 +13,7 @@ data/dataset_extra/
 # Full cleaned dataset and shards (large, local-only)
 data/asl_clean/
 data/asl_shards/
+data/asl_shards_old/
 data/splits/asl_clean/
 
 # data/asl_clean_mini/ is intentionally tracked in git (small sample)
