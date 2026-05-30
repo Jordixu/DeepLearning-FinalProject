@@ -1,0 +1,15 @@
+{
+  "exp_name": "transfer_resnet18",
+  "model": "resnet18",
+  "test_loss": 0.034924,
+  "test_acc": 0.991416,
+  "test_macro_f1": 0.959527,
+  "test_balanced_acc": 0.972405,
+  "inference_latency_ms": 1.006,
+  "num_params_M": 11.2,
+  "phase1_epochs": 5,
+  "phase2_epochs": 30,
+  "phase1_time_s": 170.8,
+  "phase2_time_s": 1007.1,
+  "total_training_time_s": 1178.0
+}

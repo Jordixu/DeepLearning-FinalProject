@@ -1,0 +1,15 @@
+{
+  "exp_name": "transfer_mobilenet_v3_small",
+  "model": "mobilenet_v3_small",
+  "test_loss": 0.036008,
+  "test_acc": 0.989834,
+  "test_macro_f1": 0.95753,
+  "test_balanced_acc": 0.983105,
+  "inference_latency_ms": 2.059,
+  "num_params_M": 1.56,
+  "phase1_epochs": 5,
+  "phase2_epochs": 39,
+  "phase1_time_s": 173.8,
+  "phase2_time_s": 1310.4,
+  "total_training_time_s": 1484.2
+}

@@ -1,0 +1,15 @@
+{
+  "exp_name": "transfer_efficientnet_b0",
+  "model": "efficientnet_b0",
+  "test_loss": 0.049092,
+  "test_acc": 0.98991,
+  "test_macro_f1": 0.952767,
+  "test_balanced_acc": 0.977635,
+  "inference_latency_ms": 3.236,
+  "num_params_M": 4.05,
+  "phase1_epochs": 5,
+  "phase2_epochs": 27,
+  "phase1_time_s": 187.0,
+  "phase2_time_s": 1188.8,
+  "total_training_time_s": 1375.8
+}
