@@ -55,3 +55,5 @@ Thumbs.db
 
 # Cluster directory (self-contained HPC copy, not committed)
 cluster/
+
+data/
