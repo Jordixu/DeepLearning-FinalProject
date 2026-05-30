@@ -184,6 +184,46 @@ def _assign_splits(df: pd.DataFrame, dataset_splits: Dict[str, str]) -> pd.DataF
 
 
 # ---------------------------------------------------------------------------
+# Step 3b: Balance train sources
+# ---------------------------------------------------------------------------
+
+def _balance_train_sources(
+    df: pd.DataFrame,
+    seed: int,
+    dominant_source: str = "combine_asl",
+) -> pd.DataFrame:
+    """
+    Undersample the dominant source in the train split so all sources
+    contribute equally (by total count).  Other splits are untouched.
+    Prevents the model from overfitting to one dataset's visual style.
+    """
+    train_mask = df["split"] == "train"
+    train_df = df[train_mask]
+    other_df = df[~train_mask]
+
+    minority_count = (
+        train_df[train_df["source_dataset"] != dominant_source]
+        .shape[0]
+    )
+    if minority_count == 0:
+        return df  # nothing to balance
+
+    dominant_df = train_df[train_df["source_dataset"] == dominant_source]
+    minority_df = train_df[train_df["source_dataset"] != dominant_source]
+
+    if len(dominant_df) > minority_count:
+        dominant_df = dominant_df.sample(n=minority_count, random_state=seed)
+        print(
+            f"  [balance] Undersampled '{dominant_source}' in train: "
+            f"{len(train_df[train_df['source_dataset'] == dominant_source]):,} → {minority_count:,}  "
+            f"(minority total: {minority_count:,})"
+        )
+
+    balanced_train = pd.concat([dominant_df, minority_df], ignore_index=True)
+    return pd.concat([balanced_train, other_df], ignore_index=True)
+
+
+# ---------------------------------------------------------------------------
 # Step 4: Write split CSVs and preprocessing report
 # ---------------------------------------------------------------------------
 
@@ -345,6 +385,11 @@ def prepare(cfg: Config, skip_shards: bool = False, dry_run: bool = False, skip_
         n = (df["split"] == split).sum()
         src = [k for k, v in pp.dataset_splits.items() if v == split]
         print(f"  {split}: {n:,} images  (source: {src})")
+
+    print("\n" + "=" * 60)
+    print("Step 3b: Balancing train sources...")
+    df = _balance_train_sources(df, seed=pp.random_seed)
+    print(f"  train: {(df['split'] == 'train').sum():,} images after balancing")
 
     if dry_run:
         print("\nDry run - no files written.")
