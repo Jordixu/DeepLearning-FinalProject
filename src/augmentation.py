@@ -33,11 +33,11 @@ def build_train_transform(
     return T.Compose([
         T.Resize((image_size, image_size)),
         T.RandomAffine(
-            degrees=15,
-            translate=(0.10, 0.10),
+            degrees=30,
+            translate=(0.15, 0.15),
             shear=(-10, 10, -10, 10),
         ),
-        T.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.2, hue=0.05),
+        T.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.2, hue=0.05),
         T.GaussianBlur(kernel_size=3, sigma=(0.1, 1.5)),
         T.ToImage(),
         T.ToDtype(torch.float32, scale=True),
