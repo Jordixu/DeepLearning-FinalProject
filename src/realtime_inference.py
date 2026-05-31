@@ -28,10 +28,10 @@ from src.augmentation import build_eval_transform
 from src.model import get_model
 
 CLASSES = [
-    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+    "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
     "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
     "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
-    "U", "V", "W", "X", "Y", "Z", "nothing",
+    "U", "V", "W", "X", "Y", "Z", "blank",
 ]
 
 # Guide-box fraction of the shorter frame dimension
@@ -116,7 +116,7 @@ def draw_overlay(
 def run(checkpoint: str, model_name: str, camera: int, top_k: int, device: str) -> None:
     print(f"Loading '{model_name}' from {checkpoint} on {device} ...")
     model = load_checkpoint(model_name, checkpoint, device)
-    transform = build_eval_transform(image_size=224, use_imagenet_norm=True)
+    transform = build_eval_transform(image_size=224)
     print("Ready. Camera opening ...")
 
     cap = cv2.VideoCapture(camera, cv2.CAP_DSHOW)
@@ -200,7 +200,7 @@ Examples:
                         help="Model architecture — must match the checkpoint (default: mobilenet_v3_small)")
     parser.add_argument("--camera", type=int, default=0,
                         help="Camera device index (default: 0)")
-    parser.add_argument("--top-k", type=int, default=3,
+    parser.add_argument("--top-k", "--top_k", type=int, default=3,
                         help="Number of top predictions shown in the overlay (default: 3)")
     parser.add_argument("--device", default=None,
                         help="Compute device: cpu or cuda (auto-detected if omitted)")

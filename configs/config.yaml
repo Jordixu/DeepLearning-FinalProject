@@ -6,60 +6,44 @@
 # ---------------------------------------------------------------------------
 # Local layout:
 #   data/
-#     asl_clean_mini/{train,val,test}/<class>/       <- mini sample (tracked in git)
-#     asl_clean/{train,val,test}/<class>/             <- full dataset (local only)
-#     asl_shards/{train,val,test}/*.tar               <- WebDataset shards (cloud training)
-#     splits/asl_clean_mini/{train,val,test}.csv      <- mini manifests (tracked in git)
-#     splits/asl_clean/{train,val,test}.csv           <- full manifests (local only)
+#     merged_dataset/{class}/              <- all 5 datasets merged (run scripts/merge_datasets.py)
+#     splits/merged/{train,val,test}.csv   <- 70/15/15 stratified split manifests
+#     norm_stats.json                      <- per-channel mean/std computed on train only
+#     asl_shards/{train,val,test}/*.tar    <- WebDataset shards (cloud training)
 #
 # Cloud training:
-#   1. Run: python -m src.prepare_data     (produces data/asl_shards/)
-#   2. Upload data/ (or just asl_shards/) to your cloud storage
+#   1. Run: python -m src.prepare_data     (produces data/splits/merged/ + data/asl_shards/)
+#   2. Upload data/asl_shards/ to your cloud storage
 #   3. Set dataset_variant: shards and update data_root below
-#
-#   Colab: call config.mount_drive() before load_config().
-#     Upload data/ to MyDrive/asl/ so that asl_shards/ is at MyDrive/asl/asl_shards/
-#
-#   Kaggle: add your uploaded dataset; update the slug in data_root below.
-#     Expected layout: /kaggle/input/<slug>/asl_shards/{train,val,test}/
 paths:
   local:
     data_root: data/
     results_root: results/
     checkpoints_root: checkpoints/
   colab:
-    data_root: /content/drive/MyDrive/asl/   # <- UPDATE
-    results_root: /content/drive/MyDrive/asl/results/ # <- UPDATE
-    checkpoints_root: /content/drive/MyDrive/asl/checkpoints/ # <- UPDATE
+    data_root: /content/drive/MyDrive/asl/        # <- UPDATE
+    results_root: /content/drive/MyDrive/asl/results/
+    checkpoints_root: /content/drive/MyDrive/asl/checkpoints/
   kaggle:
-    data_root: /kaggle/input/asl-data/  # <- UPDATE
-    results_root: /kaggle/working/results/ # <- UPDATE
-    checkpoints_root: /kaggle/working/checkpoints/ # <- UPDATE
-
-# Raw dataset directories (relative to local data_root).
-# Only used by prepare_data.py (local, no GPU).
-raw_datasets:
-  combine_asl: "combine_asl_dataset/"
-  asl_hg_raw: "ASL-HG American Sign Language Hand Gesture Image D/ASL-HG American Sign Language Hand Gesture Image D/ASL_HG_36000/ASL_Raw_Images/asl_dataset/"
-  asl_alphabet: "archive (2)/asl_alphabet_train/asl_alphabet_train/"
+    data_root: /kaggle/input/asl-data/             # <- UPDATE
+    results_root: /kaggle/working/results/
+    checkpoints_root: /kaggle/working/checkpoints/
 
 # Subdirectory names (relative to data_root)
-mini_dir: asl_clean_mini/
-clean_dir: asl_clean/
+merged_dir: merged_dataset/
 shards_dir: asl_shards/
 
 # ---------------------------------------------------------------------------
 # Active dataset variant — change this one line to switch datasets
 # ---------------------------------------------------------------------------
-#   mini:   data/asl_clean_mini/ + splits/asl_clean_mini/  (small sample, local dev/testing)
-#   full:   data/asl_clean/      + splits/asl_clean/       (full dataset, local only)
-#   shards: data/asl_shards/                               (WebDataset tars, cloud training)
-dataset_variant: shards
+#   merged: data/merged_dataset/ + splits/merged/  (local, all 5 datasets)
+#   shards: data/asl_shards/                       (WebDataset tars, cloud training)
+dataset_variant: merged
 
-# Labels (37 classes: digits 0-9, letters A-Z, nothing)
-# All three source datasets now cover all 37 classes.
+# ---------------------------------------------------------------------------
+# Classes (40 total: digits 0-9 + 10, letters A-Z, blank, del, space)
+# ---------------------------------------------------------------------------
 classes:
-  - "0"
   - "1"
   - "2"
   - "3"
@@ -69,6 +53,7 @@ classes:
   - "7"
   - "8"
   - "9"
+  - "10"
   - "A"
   - "B"
   - "C"
@@ -95,141 +80,20 @@ classes:
   - "X"
   - "Y"
   - "Z"
-  - "nothing"
-
-# Per-dataset folder-name -> canonical class name.
-# Folders NOT listed are skipped (e.g. del, space in asl_alphabet).
-class_maps:
-  combine_asl:
-    "0": "0"
-    "1": "1"
-    "2": "2"
-    "3": "3"
-    "4": "4"
-    "5": "5"
-    "6": "6"
-    "7": "7"
-    "8": "8"
-    "9": "9"
-    "a": "A"
-    "b": "B"
-    "c": "C"
-    "d": "D"
-    "e": "E"
-    "f": "F"
-    "g": "G"
-    "h": "H"
-    "i": "I"
-    "j": "J"
-    "k": "K"
-    "l": "L"
-    "m": "M"
-    "n": "N"
-    "o": "O"
-    "p": "P"
-    "q": "Q"
-    "r": "R"
-    "s": "S"
-    "t": "T"
-    "u": "U"
-    "v": "V"
-    "w": "W"
-    "x": "X"
-    "y": "Y"
-    "z": "Z"
-    "nothing": "nothing"
-  asl_hg_raw:
-    "0": "0"
-    "1": "1"
-    "2": "2"
-    "3": "3"
-    "4": "4"
-    "5": "5"
-    "6": "6"
-    "7": "7"
-    "8": "8"
-    "9": "9"
-    "A": "A"
-    "B": "B"
-    "C": "C"
-    "D": "D"
-    "E": "E"
-    "F": "F"
-    "G": "G"
-    "H": "H"
-    "I": "I"
-    "J": "J"
-    "K": "K"
-    "L": "L"
-    "M": "M"
-    "N": "N"
-    "O": "O"
-    "P": "P"
-    "Q": "Q"
-    "R": "R"
-    "S": "S"
-    "T": "T"
-    "U": "U"
-    "V": "V"
-    "W": "W"
-    "X": "X"
-    "Y": "Y"
-    "Z": "Z"
-    "nothing": "nothing"
-  asl_alphabet:
-    "0": "0"
-    "1": "1"
-    "2": "2"
-    "3": "3"
-    "4": "4"
-    "5": "5"
-    "6": "6"
-    "7": "7"
-    "8": "8"
-    "9": "9"
-    "A": "A"
-    "B": "B"
-    "C": "C"
-    "D": "D"
-    "E": "E"
-    "F": "F"
-    "G": "G"
-    "H": "H"
-    "I": "I"
-    "J": "J"
-    "K": "K"
-    "L": "L"
-    "M": "M"
-    "N": "N"
-    "O": "O"
-    "P": "P"
-    "Q": "Q"
-    "R": "R"
-    "S": "S"
-    "T": "T"
-    "U": "U"
-    "V": "V"
-    "W": "W"
-    "X": "X"
-    "Y": "Y"
-    "Z": "Z"
-    "nothing": "nothing"
+  - "blank"
 
 # ---------------------------------------------------------------------------
-# Preprocessing (used by prepare_data.py and augmentation.py)
+# Preprocessing (used by prepare_data.py)
 # ---------------------------------------------------------------------------
-# dataset_splits: assigns each source dataset to exactly one split.
-# Change the values (train/val/test) to reassign datasets.
 preprocessing:
   image_size: 224
   min_image_size: 32
-  shard_size: 1000            # images per tar shard
+  shard_size: 1000
   random_seed: 33
-  cache_resized: false
-  dataset_splits:
-    combine_asl: train
-    asl_hg_raw: val
-    asl_alphabet: test
+  split_ratios:
+    train: 0.70
+    val: 0.15
+    test: 0.15
 
 # ---------------------------------------------------------------------------
 # Data loader (per environment)
@@ -267,7 +131,7 @@ training:
   use_amp: true
   use_weighted_sampler: false
   use_class_weights: true
-  scheduler: cosine # cosine | step | none
+  scheduler: cosine   # cosine | step | none
   torch_compile: false
 
 # ---------------------------------------------------------------------------
