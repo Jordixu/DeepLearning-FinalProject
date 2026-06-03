@@ -1,0 +1,15 @@
+{
+  "exp_name": "baseline",
+  "model": "baseline",
+  "test_loss": 1.104235,
+  "test_acc": 0.696471,
+  "test_macro_f1": 0.692876,
+  "test_balanced_acc": 0.694562,
+  "inference_latency_ms": 0.141,
+  "num_params_M": 0.16,
+  "phase1_epochs": 50,
+  "phase2_epochs": 0,
+  "phase1_time_s": 653.4,
+  "phase2_time_s": 0.0,
+  "total_training_time_s": 653.4
+}

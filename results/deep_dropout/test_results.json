@@ -1,0 +1,15 @@
+{
+  "exp_name": "deep_dropout",
+  "model": "deep_regularized",
+  "test_loss": 1.132015,
+  "test_acc": 0.698547,
+  "test_macro_f1": 0.699163,
+  "test_balanced_acc": 0.698031,
+  "inference_latency_ms": 0.283,
+  "num_params_M": 1.45,
+  "phase1_epochs": 50,
+  "phase2_epochs": 0,
+  "phase1_time_s": 985.2,
+  "phase2_time_s": 0.0,
+  "total_training_time_s": 985.2
+}
