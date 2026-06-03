@@ -9,9 +9,6 @@ scikit-learn>=1.3.0
 Pillow>=10.0.0
 tqdm>=4.65.0
 
-# Near-duplicate detection
-imagehash>=4.3.1
-
 # Configuration
 PyYAML>=6.0
 
@@ -19,11 +16,12 @@ PyYAML>=6.0
 matplotlib>=3.7.0
 seaborn>=0.12.0
 
-# Segmentation & real-time
-mediapipe>=0.10.0
+# Real-time webcam inference
 opencv-python>=4.8.0
 
 # Notebook
 ipykernel>=6.0.0
 ipywidgets>=8.0.0
+
+# Shards
 webdataset>=0.3.0
