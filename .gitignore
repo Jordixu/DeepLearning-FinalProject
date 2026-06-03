@@ -1,6 +1,7 @@
 # Datasets, shards and large artifacts - never committed (local / cluster only).
 # This covers raw sources, merged_dataset/, asl_shards/, splits, norm_stats, etc.
-data/
+data/*
+!data/asl_clean_mini/
 
 # Downloaded ImageNet backbone weights (large; fetched by scripts/download_weights.py)
 pretrained_weights/
