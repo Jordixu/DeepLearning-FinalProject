@@ -1,27 +1,21 @@
-# Raw source datasets (never commit)
-data/ASL-HG American Sign Language Hand Gesture Image D/
-data/combine_asl_dataset/
-data/archive (2)/
-data/manifest_raw.csv
-data/dedup_report.json
-data/asl_clean.zip
-data/archive (2).zip
-data/combine_asl_dataset.zip
-data/combine_asl_dataset_x/
-data/dataset_extra/
-
-# Full cleaned dataset and shards (large, local-only)
-data/asl_clean/
-data/asl_shards/
-data/asl_shards_old/
-data/splits/asl_clean/
-
-# data/asl_clean_mini/ is intentionally tracked in git (small sample)
-# data/splits/asl_clean_mini/ is intentionally tracked in git
+# Datasets, shards and large artifacts - never committed (local / cluster only).
+# This covers raw sources, merged_dataset/, asl_shards/, splits, norm_stats, etc.
+data/
 
 # Generated outputs
 results/
-checkpoints/
+old_results/
+
+# Downloaded ImageNet backbone weights (large; fetched by scripts/download_weights.py)
+pretrained_weights/
+
+# Saved checkpoints are large, so they stay local - except the MobileNet one,
+# which is tracked on purpose so the real-time demo works out of the box
+# (see README "Real-time inference").
+checkpoints/*
+!checkpoints/transfer_mobilenet_v3_small/
+checkpoints/transfer_mobilenet_v3_small/*
+!checkpoints/transfer_mobilenet_v3_small/best.pt
 
 # Python
 __pycache__/
@@ -53,8 +47,5 @@ Thumbs.db
 *.swp
 *.swo
 
-# Cluster directory (self-contained HPC copy, not committed)
+# Cluster directory (legacy HPC workspace, pipeline now lives at root)
 cluster/
-
-data/
-old_results/
