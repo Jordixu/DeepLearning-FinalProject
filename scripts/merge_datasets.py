@@ -52,13 +52,13 @@ def collect_sources() -> list[tuple[str, str, Path, list[Path]]]:
         files = sorted(f for f in cls_dir.iterdir() if f.suffix.lower() in IMAGE_EXTS)
         entries.append((prefix, cls_name, files))
 
-    # 1a. archive (2) train — class subfolders
+    # 1a. archive (2) train: class subfolders
     arc_train = ROOT / "archive (2)" / "asl_alphabet_train" / "asl_alphabet_train"
     for cls_dir in sorted(arc_train.iterdir()):
         if cls_dir.is_dir():
             _add_dir("arc", cls_dir)
 
-    # 1b. archive (2) test — flat folder: {Class}_test.jpg
+    # 1b. archive (2) test: flat folder, {Class}_test.jpg
     arc_test = ROOT / "archive (2)" / "asl_alphabet_test" / "asl_alphabet_test"
     if arc_test.exists():
         flat_files: dict[str, list[Path]] = {}
@@ -71,26 +71,26 @@ def collect_sources() -> list[tuple[str, str, Path, list[Path]]]:
         for cls_name, files in sorted(flat_files.items()):
             entries.append(("arct", cls_name, files))
 
-    # 2. ASL_Raw_Images — class subfolders
+    # 2. ASL_Raw_Images: class subfolders
     raw_root = ROOT / "ASL_Raw_Images" / "asl_dataset"
     for cls_dir in sorted(raw_root.iterdir()):
         if cls_dir.is_dir():
             _add_dir("raw", cls_dir)
 
-    # 3. combine_asl_dataset — class subfolders
+    # 3. combine_asl_dataset: class subfolders
     com_root = ROOT / "combine_asl_dataset"
     for cls_dir in sorted(com_root.iterdir()):
         if cls_dir.is_dir():
             _add_dir("com", cls_dir)
 
-    # 4. synthetic_alphabet (Train + Test) — class subfolders
+    # 4. synthetic_alphabet (Train + Test): class subfolders
     for split in ("Train_Alphabet", "Test_Alphabet"):
         split_root = ROOT / "synthetic_alphabet" / split
         for cls_dir in sorted(split_root.iterdir()):
             if cls_dir.is_dir():
                 _add_dir("syna", cls_dir)
 
-    # 5. synthetic_numbers (Train + Test) — class subfolders
+    # 5. synthetic_numbers (Train + Test): class subfolders
     for split in ("Train_Nums", "Test_Nums"):
         split_root = ROOT / "synthetic_numbers" / split
         for cls_dir in sorted(split_root.iterdir()):

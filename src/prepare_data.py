@@ -2,9 +2,17 @@
 Data preparation pipeline for the merged ASL dataset.
 
 Reads data/merged_dataset/{class}/ and produces:
-  - data/splits/merged/{train,val,test}.csv  — stratified 70/15/15 split
-  - data/norm_stats.json                     — per-channel mean & std (train only)
-  - data/asl_shards/{train,val,test}/*.tar   — WebDataset shards (optional)
+  - data/splits/merged/{train,val,test}.csv  : stratified 70/15/15 split
+  - data/norm_stats.json                     : per-channel mean & std (train only)
+  - data/asl_shards/{train,val,test}/*.tar   : WebDataset shards (optional)
+
+Mini dataset mode
+-----------------
+Pass --mini N to sample N images per class from merged_dataset/ into
+asl_clean_mini/, then generate split CSVs for local dev/testing.
+No shards are produced in mini mode.
+
+    python -m src.prepare_data --mini 10
 
 Splitting strategy
 ------------------
@@ -16,6 +24,7 @@ Usage
 -----
     python -m src.prepare_data
     python -m src.prepare_data --config configs/config.yaml
+    python -m src.prepare_data --mini N          # build mini dataset (N images/class)
     python -m src.prepare_data --skip_shards      # stop after CSVs + norm stats
     python -m src.prepare_data --skip_validation  # skip corrupt/size check
     python -m src.prepare_data --dry_run          # print stats only
@@ -25,6 +34,8 @@ import argparse
 import io
 import json
 import pathlib
+import random
+import shutil
 import sys
 import tarfile
 from typing import Dict, List, Tuple
@@ -42,24 +53,56 @@ IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 
 
 # ---------------------------------------------------------------------------
-# Step 1: Build manifest from merged_dataset/
+# Step 0 (optional): Sample mini dataset from merged_dataset/
 # ---------------------------------------------------------------------------
 
-def _build_manifest(cfg: Config) -> pd.DataFrame:
+def _sample_mini(cfg: Config, n_per_class: int) -> None:
     merged_dir = cfg.merged_dir
+    clean_dir = cfg.clean_dir
+
     if not merged_dir.exists():
         raise FileNotFoundError(
             f"merged_dataset not found at {merged_dir}. "
             "Run scripts/merge_datasets.py first."
         )
 
-    rows: List[dict] = []
+    rng = random.Random(cfg.preprocessing.random_seed)
+    clean_dir.mkdir(parents=True, exist_ok=True)
+
     for cls_dir in sorted(merged_dir.iterdir()):
         if not cls_dir.is_dir():
             continue
         cls_name = cls_dir.name
         if cls_name not in cfg.class_to_idx:
-            print(f"  [WARN] Unknown class folder '{cls_name}' — skipping")
+            continue
+        imgs = [f for f in cls_dir.iterdir() if f.suffix.lower() in IMAGE_EXTS]
+        sample = rng.sample(imgs, min(n_per_class, len(imgs)))
+        out_dir = clean_dir / cls_name
+        out_dir.mkdir(exist_ok=True)
+        for img in sample:
+            shutil.copy2(img, out_dir / img.name)
+        print(f"  {cls_name}: {len(sample)} images -> {out_dir}")
+
+    print(f"Mini dataset written to {clean_dir}")
+
+
+# ---------------------------------------------------------------------------
+# Step 1: Build manifest from source directory
+# ---------------------------------------------------------------------------
+
+def _build_manifest(source_dir: pathlib.Path, cfg: Config) -> pd.DataFrame:
+    if not source_dir.exists():
+        raise FileNotFoundError(
+            f"Source directory not found at {source_dir}."
+        )
+
+    rows: List[dict] = []
+    for cls_dir in sorted(source_dir.iterdir()):
+        if not cls_dir.is_dir():
+            continue
+        cls_name = cls_dir.name
+        if cls_name not in cfg.class_to_idx:
+            print(f"  [WARN] Unknown class folder '{cls_name}', skipping")
             continue
         cls_id = cfg.class_to_idx[cls_name]
         for img in cls_dir.iterdir():
@@ -200,7 +243,7 @@ def _compute_norm_stats(
 
     Images are resized to image_size x image_size before computing statistics
     so the values match what the model will see after the resize transform.
-    Only train samples are used — val/test images must not influence the stats.
+    Only train samples are used; val/test images must not influence the stats.
     """
     rng = np.random.default_rng(seed)
     paths = train_df["filepath"].to_numpy().copy()
@@ -342,13 +385,24 @@ def prepare(
     skip_shards: bool = False,
     dry_run: bool = False,
     skip_validation: bool = False,
+    mini_n=None,
 ) -> None:
     pp = cfg.preprocessing
-    splits_dir = cfg.splits_dir
+
+    if mini_n is not None:
+        print("=" * 60)
+        print(f"Step 0: Sampling {mini_n} images/class into {cfg.clean_dir} ...")
+        _sample_mini(cfg, mini_n)
+        source_dir = cfg.clean_dir
+        splits_dir = cfg.data_root / "splits" / "asl_clean_mini"
+        skip_shards = True
+    else:
+        source_dir = cfg.merged_dir
+        splits_dir = cfg.splits_dir
 
     print("=" * 60)
-    print("Step 1: Scanning merged_dataset/ ...")
-    df = _build_manifest(cfg)
+    print(f"Step 1: Scanning {source_dir.name}/ ...")
+    df = _build_manifest(source_dir, cfg)
 
     print("\n" + "=" * 60)
     print("Step 2: Validating images ...")
@@ -369,7 +423,7 @@ def prepare(
     df = _stratified_split(df, ratios["train"], ratios["val"], pp.random_seed)
 
     if dry_run:
-        print("\nDry run — no files written.")
+        print("\nDry run: no files written.")
         return
 
     print("\n" + "=" * 60)
@@ -423,6 +477,8 @@ def prepare(
 def main() -> None:
     parser = argparse.ArgumentParser(description="ASL merged dataset preparation pipeline")
     parser.add_argument("--config", default="configs/config.yaml")
+    parser.add_argument("--mini", type=int, metavar="N", default=None,
+                        help="Sample N images per class into asl_clean_mini/ and generate split CSVs")
     parser.add_argument("--skip_shards", action="store_true")
     parser.add_argument("--skip_validation", action="store_true")
     parser.add_argument("--dry_run", action="store_true")
@@ -434,6 +490,7 @@ def main() -> None:
         skip_shards=args.skip_shards,
         skip_validation=args.skip_validation,
         dry_run=args.dry_run,
+        mini_n=args.mini,
     )
 
 
