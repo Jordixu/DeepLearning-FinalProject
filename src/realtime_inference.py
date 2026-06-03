@@ -5,8 +5,8 @@ Usage:
     python -m src.realtime_inference --checkpoint checkpoints/<exp>/best.pt --model mobilenet_v3_small
 
 Controls:
-    q  — quit
-    s  — save screenshot
+    q: quit
+    s: save screenshot
 """
 
 import argparse
@@ -41,9 +41,9 @@ ROI_FRACTION = 0.55
 def load_checkpoint(model_name: str, checkpoint_path: str, device: str) -> torch.nn.Module:
     model = get_model(model_name, num_classes=len(CLASSES), freeze_backbone=False)
     state = torch.load(checkpoint_path, map_location=device, weights_only=True)
-    # last.pt is a full dict; best.pt is a raw state_dict
-    if isinstance(state, dict) and "model_state_dict" in state:
-        state = state["model_state_dict"]
+    # last.pt is a full checkpoint dict (see Trainer); best.pt is a raw state_dict
+    if isinstance(state, dict) and "model_state" in state:
+        state = state["model_state"]
     model.load_state_dict(state)
     model.to(device)
     model.eval()
@@ -136,7 +136,7 @@ def run(checkpoint: str, model_name: str, camera: int, top_k: int, device: str) 
     while True:
         ret, frame = cap.read()
         if not ret:
-            print("Frame read failed — camera disconnected?")
+            print("Frame read failed, camera disconnected?")
             break
 
         roi_crop, roi_box = get_roi(frame)
@@ -184,7 +184,7 @@ def main() -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python -m src.realtime_inference --checkpoint checkpoints/transfer_mobilenet/best.pt
+  python -m src.realtime_inference --checkpoint checkpoints/transfer_mobilenet_v3_small/best.pt
   python -m src.realtime_inference --checkpoint checkpoints/exp/best.pt --model resnet18
   python -m src.realtime_inference --checkpoint checkpoints/exp/best.pt --camera 1
         """,
@@ -197,7 +197,7 @@ Examples:
                             "deep_batchnorm", "deep_batchnorm_regularized",
                             "resnet18", "resnet50", "mobilenet_v3_small", "efficientnet_b0",
                         ],
-                        help="Model architecture — must match the checkpoint (default: mobilenet_v3_small)")
+                        help="Model architecture, must match the checkpoint (default: mobilenet_v3_small)")
     parser.add_argument("--camera", type=int, default=0,
                         help="Camera device index (default: 0)")
     parser.add_argument("--top-k", "--top_k", type=int, default=3,
