@@ -9,18 +9,14 @@ Primary entry point: build_dataloaders(...)
 ASLDataset is kept for EDA / offline inspection and is also reused by the
 raw-image loading path.
 
-Shard formats (per sample inside each tar):
-    JPEG (default):  {key}.jpg + {key}.cls
-    Fast numpy:      {key}.npy + {key}.cls  (_info.json has "format": "npy")
+Shard format (per sample inside each tar): {key}.jpg + {key}.cls
 """
 
 import hashlib
-import io
 import json
 import pathlib
 from typing import Callable, Dict, List, Literal, Optional, Tuple, Union
 
-import numpy as np
 import pandas as pd
 import torch
 import webdataset as wds
@@ -28,7 +24,6 @@ from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 
 
-SegMode = Literal["none", "mediapipe_crop"]
 DatasetSource = Literal["shards", "raw", "auto"]
 
 
@@ -53,20 +48,6 @@ def _decode_cls(raw) -> int:
     return int(str(raw).strip())
 
 
-class _NpyTransform:
-    """Deserialize a raw .npy bytes blob → PIL image → transform tensor.
-
-    Stored as a callable class so it is picklable by DataLoader workers.
-    """
-
-    def __init__(self, transform: Callable) -> None:
-        self.transform = transform
-
-    def __call__(self, data: bytes) -> torch.Tensor:
-        arr = np.load(io.BytesIO(data))   # uint8 (H, W, 3)
-        return self.transform(Image.fromarray(arr))
-
-
 def _build_split_loader(
     split_dir: pathlib.Path,
     transform: Callable,
@@ -82,33 +63,29 @@ def _build_split_loader(
     info = load_shard_info(split_dir)
     shard_paths = [str(split_dir / s) for s in info["shards"]]
     total = info["total"]
-    fmt = info.get("format", "jpeg")
+
+    # Cap workers to shard count: extra workers get no shards and waste memory/CPU
+    num_workers = min(num_workers, len(shard_paths))
 
     if debug:
-        print(f"  [DEBUG] _build_split_loader: split={split_dir.name} | shards={len(shard_paths)} | total={total} | fmt={fmt} | num_workers={num_workers}", flush=True)
+        print(f"  [DEBUG] _build_split_loader: split={split_dir.name} | shards={len(shard_paths)} | total={total} | num_workers={num_workers}", flush=True)
 
     wds_base = wds.WebDataset(
         shard_paths, shardshuffle=500 if shuffle else False,
-        nodesplitter=wds.split_by_node,
+        nodesplitter=wds.split_by_node, empty_check=False,
     ).shuffle(1000 if shuffle else 0)
 
-    if fmt == "npy":
-        dataset = (
-            wds_base
-            .to_tuple("npy", "cls")
-            .map_tuple(_NpyTransform(transform), _decode_cls)
-        )
-    else:
-        dataset = (
-            wds_base
-            .decode("pil")
-            .to_tuple("jpg", "cls")
-            .map_tuple(transform, _decode_cls)
-        )
+    dataset = (
+        wds_base
+        .decode("pil")
+        .to_tuple("jpg", "cls")
+        .map_tuple(transform, _decode_cls)
+    )
 
     n_batches = total // batch_size if drop_last else (total + batch_size - 1) // batch_size
 
-    pw = persistent_workers and num_workers > 0
+    # persistent_workers causes stale shard iterators on eval splits; only enable for training
+    pw = persistent_workers and shuffle and num_workers > 0
     pf = prefetch_factor if num_workers > 0 else None
 
     loader = wds.WebLoader(
@@ -136,7 +113,6 @@ def _build_raw_loader(
     shuffle: bool,
     drop_last: bool,
     debug: bool = False,
-    segmentation_mode: SegMode = "none",
     cache_dir: Optional[str] = None,
 ) -> DataLoader:
     import platform, time as _time
@@ -148,11 +124,10 @@ def _build_raw_loader(
         csv_path,
         transform=transform,
         data_root=data_root,
-        segmentation_mode=segmentation_mode,
         cache_dir=cache_dir,
     )
     if debug:
-        print(f"  [DEBUG] ASLDataset built: {len(dataset)} samples in {_time.perf_counter()-t0:.3f}s | seg={segmentation_mode}", flush=True)
+        print(f"  [DEBUG] ASLDataset built: {len(dataset)} samples in {_time.perf_counter()-t0:.3f}s", flush=True)
 
     pw = persistent_workers and num_workers > 0
     pf = prefetch_factor if num_workers > 0 else None
@@ -191,7 +166,6 @@ def build_dataloaders(
     data_root: Optional[Union[str, pathlib.Path]] = None,
     splits_dir: Optional[Union[str, pathlib.Path]] = None,
     debug: bool = False,
-    segmentation_mode: SegMode = "none",
     cache_dir: Optional[str] = None,
 ) -> Tuple[DataLoader, DataLoader, DataLoader]:
     """
@@ -259,19 +233,19 @@ def build_dataloaders(
             splits_dir / "train.csv", data_root, train_transform, batch_size, num_workers,
             pin_memory, prefetch_factor, persistent_workers,
             shuffle=True, drop_last=True,
-            debug=debug, segmentation_mode=segmentation_mode, cache_dir=cache_dir,
+            debug=debug, cache_dir=cache_dir,
         )
         val_loader = _build_raw_loader(
             splits_dir / "val.csv", data_root, eval_transform, batch_size, num_workers,
             pin_memory, prefetch_factor, persistent_workers,
             shuffle=False, drop_last=False,
-            debug=debug, segmentation_mode=segmentation_mode, cache_dir=cache_dir,
+            debug=debug, cache_dir=cache_dir,
         )
         test_loader = _build_raw_loader(
             splits_dir / "test.csv", data_root, eval_transform, batch_size, num_workers,
             pin_memory, prefetch_factor, persistent_workers,
             shuffle=False, drop_last=False,
-            debug=debug, segmentation_mode=segmentation_mode, cache_dir=cache_dir,
+            debug=debug, cache_dir=cache_dir,
         )
 
     return train_loader, val_loader, test_loader
@@ -291,7 +265,6 @@ class ASLDataset(Dataset):
         self,
         manifest_csv: Union[str, pathlib.Path],
         transform: Optional[Callable] = None,
-        segmentation_mode: SegMode = "none",
         data_root: Optional[Union[str, pathlib.Path]] = None,
         cache_dir: Optional[Union[str, pathlib.Path]] = None,
         cache_resized: bool = False,
@@ -299,12 +272,10 @@ class ASLDataset(Dataset):
     ):
         self.df = pd.read_csv(manifest_csv)
         self.transform = transform
-        self.segmentation_mode = segmentation_mode
         self.data_root = pathlib.Path(data_root) if data_root else None
         self.cache_dir = pathlib.Path(cache_dir) if cache_dir else None
         self.cache_resized = cache_resized
         self.image_size = image_size
-        self._cropper = None
 
         if cache_dir:
             self.cache_dir.mkdir(parents=True, exist_ok=True)
@@ -318,9 +289,6 @@ class ASLDataset(Dataset):
         class_id = int(row["class_id"])
 
         img = self._load_image(filepath)
-
-        if self.segmentation_mode == "mediapipe_crop":
-            img = self._mediapipe_crop(img, filepath)
 
         if self.transform is not None:
             img = self.transform(img)
@@ -351,29 +319,6 @@ class ASLDataset(Dataset):
     def _resize_cache_path(self, filepath: pathlib.Path) -> pathlib.Path:
         key = hashlib.md5(str(filepath).encode()).hexdigest()
         return self.cache_dir / "resize_cache" / f"{key}.jpg"
-
-    def _mediapipe_crop(self, img: Image.Image, filepath: pathlib.Path) -> Image.Image:
-        if self.cache_dir is not None:
-            cached = self._mp_cache_path(filepath)
-            if cached.exists():
-                return Image.open(cached).convert("RGB")
-
-        if self._cropper is None:
-            from segmentation import MediaPipeHandCropper
-            self._cropper = MediaPipeHandCropper()
-
-        cropped = self._cropper.crop(img)
-
-        if self.cache_dir is not None:
-            cached = self._mp_cache_path(filepath)
-            cached.parent.mkdir(parents=True, exist_ok=True)
-            cropped.save(cached, format="JPEG", quality=95)
-
-        return cropped
-
-    def _mp_cache_path(self, filepath: pathlib.Path) -> pathlib.Path:
-        key = hashlib.md5(str(filepath).encode()).hexdigest()
-        return self.cache_dir / "mediapipe_cache" / f"{key}.jpg"
 
     @property
     def class_names(self) -> List[str]:
