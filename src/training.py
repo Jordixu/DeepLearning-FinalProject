@@ -1,7 +1,6 @@
 """
 Trainer: wraps the training loop with:
   - CosineAnnealingLR scheduler
-  - Early stopping on val macro-F1
   - Mixed precision (AMP) via torch.amp
   - Gradient clipping
   - Gradient accumulation
@@ -20,31 +19,12 @@ import pandas as pd
 import torch
 import torch.nn as nn
 from sklearn.metrics import f1_score
-from torch.cuda.amp import GradScaler
+from torch.amp import GradScaler
 from torch.optim.lr_scheduler import CosineAnnealingLR, StepLR
 from tqdm import tqdm
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from utils import evaluate_model, plot_training_history, save_history, save_model
-
-
-class EarlyStopping:
-    def __init__(self, patience: int = 7, min_delta: float = 1e-4):
-        self.patience = patience
-        self.min_delta = min_delta
-        self.best = -float("inf")
-        self.counter = 0
-        self.should_stop = False
-
-    def step(self, metric: float) -> bool:
-        if metric > self.best + self.min_delta:
-            self.best = metric
-            self.counter = 0
-        else:
-            self.counter += 1
-            if self.counter >= self.patience:
-                self.should_stop = True
-        return self.should_stop
 
 
 class Trainer:
@@ -63,7 +43,6 @@ class Trainer:
         weight_decay: float = 1e-4,
         grad_clip: float = 1.0,
         grad_accum_steps: int = 1,
-        early_stopping_patience: int = 7,
         use_amp: bool = True,
         scheduler: str = "cosine",
         # Loss
@@ -114,7 +93,6 @@ class Trainer:
         else:
             self.scheduler = None
 
-        self.early_stopping = EarlyStopping(patience=early_stopping_patience)
         self.history: Dict[str, List[float]] = {
             "train_loss": [], "train_acc": [], "train_macro_f1": [],
             "val_loss": [], "val_acc": [], "val_macro_f1": [], "val_balanced_acc": [],
@@ -135,8 +113,6 @@ class Trainer:
             self.scheduler.load_state_dict(ckpt["scheduler_state"])
         self.history = ckpt["history"]
         self.best_val_f1 = ckpt["best_val_f1"]
-        self.early_stopping.best = ckpt["es_best"]
-        self.early_stopping.counter = ckpt["es_counter"]
         self._start_epoch = ckpt["epoch"] + 1
         print(f"  Resumed from {ckpt_path.name} (epoch {ckpt['epoch']})")
 
@@ -191,8 +167,6 @@ class Trainer:
                 "scheduler_state": self.scheduler.state_dict() if self.scheduler is not None else None,
                 "history": self.history,
                 "best_val_f1": self.best_val_f1,
-                "es_best": self.early_stopping.best,
-                "es_counter": self.early_stopping.counter,
             }
             torch.save(last_ckpt, str(self.ckpt_dir / "last.pt"))
 
@@ -200,10 +174,6 @@ class Trainer:
             n = len(self.history["train_loss"])
             csv_df = pd.DataFrame({"epoch": list(range(1, n + 1)), **self.history})
             csv_df.to_csv(str(self.results_dir / "history.csv"), index=False)
-
-            if self.early_stopping.step(val_f1):
-                print(f"  Early stopping triggered at epoch {epoch}.")
-                break
 
         plot_training_history(self.history, save_path=str(self.results_dir / "training_history.png"))
         return self.history
