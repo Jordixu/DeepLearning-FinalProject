@@ -1,47 +1,49 @@
-# Environment is auto-detected by src/config.py:detect_env().
-# Override with the ASL_ENV env var: local | colab | kaggle
+# Cluster configuration for Pirineus 3 (CSUC HPC).
+# Environment auto-detected via SLURM_JOB_ID or ASL_ENV=cluster.
+#
+# All data, results, checkpoints, and weights live under $HOME/.
+# Expected layout:
+#   $HOME/asl/                  ← this project
+#   $HOME/asl_shards/           ← WebDataset tar shards (train/ val/ test/)
+#   $HOME/pretrained_weights/   ← flat .pth weight files (no subfolders)
+#   $HOME/results/              ← training outputs
+#   $HOME/checkpoints/          ← saved model checkpoints
+#
+# See README.md for full setup instructions.
+
+debug: false
 
 # ---------------------------------------------------------------------------
-# Paths per execution environment
+# Paths
 # ---------------------------------------------------------------------------
-# Local layout:
-#   data/
-#     merged_dataset/{class}/              <- all 5 datasets merged (run scripts/merge_datasets.py)
-#     splits/merged/{train,val,test}.csv   <- 70/15/15 stratified split manifests
-#     norm_stats.json                      <- per-channel mean/std computed on train only
-#     asl_shards/{train,val,test}/*.tar    <- WebDataset shards (cloud training)
-#
-# Cloud training:
-#   1. Run: python -m src.prepare_data     (produces data/splits/merged/ + data/asl_shards/)
-#   2. Upload data/asl_shards/ to your cloud storage
-#   3. Set dataset_variant: shards and update data_root below
 paths:
   local:
     data_root: data/
     results_root: results/
     checkpoints_root: checkpoints/
-  colab:
-    data_root: /content/drive/MyDrive/asl/        # <- UPDATE
-    results_root: /content/drive/MyDrive/asl/results/
-    checkpoints_root: /content/drive/MyDrive/asl/checkpoints/
-  kaggle:
-    data_root: /kaggle/input/asl-data/             # <- UPDATE
-    results_root: /kaggle/working/results/
-    checkpoints_root: /kaggle/working/checkpoints/
+  cluster:
+    data_root: "$DATA"
+    results_root: "$HOME/results"
+    checkpoints_root: "$HOME/checkpoints"
+    weights_dir: "$DATA/pretrained_weights"
 
 # Subdirectory names (relative to data_root)
-merged_dir: merged_dataset/
+mini_dir: asl_clean_mini/
 shards_dir: asl_shards/
 
-# ---------------------------------------------------------------------------
-# Active dataset variant — change this one line to switch datasets
-# ---------------------------------------------------------------------------
-#   merged: data/merged_dataset/ + splits/merged/  (local, all 5 datasets)
-#   shards: data/asl_shards/                       (WebDataset tars, cloud training)
-dataset_variant: merged
+# Active dataset variant 
+dataset_variant: shards # mini or shards
+
+# Raw dataset paths (local preprocessing only, not needed on cluster)
+raw_datasets:
+  combine_asl: "combine_asl_dataset/"
+  asl_hg_raw: "ASL-HG American Sign Language Hand Gesture Image D/ASL-HG American Sign Language Hand Gesture Image D/ASL_HG_36000/ASL_Raw_Images/asl_dataset/"
+  asl_alphabet: "archive (2)/asl_alphabet_train/asl_alphabet_train/"
 
 # ---------------------------------------------------------------------------
-# Classes (40 total: digits 0-9 + 10, letters A-Z, blank, del, space)
+# Labels (37 classes: digits 1-10, letters A-Z, blank)
+# "10" comes from the synthetic dataset only. "0" does not exist in any source.
+# Source folders named "nothing"/"Blank" are normalised to "blank" during merge.
 # ---------------------------------------------------------------------------
 classes:
   - "1"
@@ -82,21 +84,135 @@ classes:
   - "Z"
   - "blank"
 
+class_maps:
+  combine_asl:
+    "1": "1"
+    "2": "2"
+    "3": "3"
+    "4": "4"
+    "5": "5"
+    "6": "6"
+    "7": "7"
+    "8": "8"
+    "9": "9"
+    "a": "A"
+    "b": "B"
+    "c": "C"
+    "d": "D"
+    "e": "E"
+    "f": "F"
+    "g": "G"
+    "h": "H"
+    "i": "I"
+    "j": "J"
+    "k": "K"
+    "l": "L"
+    "m": "M"
+    "n": "N"
+    "o": "O"
+    "p": "P"
+    "q": "Q"
+    "r": "R"
+    "s": "S"
+    "t": "T"
+    "u": "U"
+    "v": "V"
+    "w": "W"
+    "x": "X"
+    "y": "Y"
+    "z": "Z"
+    "nothing": "blank"
+  asl_hg_raw:
+    "1": "1"
+    "2": "2"
+    "3": "3"
+    "4": "4"
+    "5": "5"
+    "6": "6"
+    "7": "7"
+    "8": "8"
+    "9": "9"
+    "A": "A"
+    "B": "B"
+    "C": "C"
+    "D": "D"
+    "E": "E"
+    "F": "F"
+    "G": "G"
+    "H": "H"
+    "I": "I"
+    "J": "J"
+    "K": "K"
+    "L": "L"
+    "M": "M"
+    "N": "N"
+    "O": "O"
+    "P": "P"
+    "Q": "Q"
+    "R": "R"
+    "S": "S"
+    "T": "T"
+    "U": "U"
+    "V": "V"
+    "W": "W"
+    "X": "X"
+    "Y": "Y"
+    "Z": "Z"
+    "nothing": "blank"
+  asl_alphabet:
+    "1": "1"
+    "2": "2"
+    "3": "3"
+    "4": "4"
+    "5": "5"
+    "6": "6"
+    "7": "7"
+    "8": "8"
+    "9": "9"
+    "A": "A"
+    "B": "B"
+    "C": "C"
+    "D": "D"
+    "E": "E"
+    "F": "F"
+    "G": "G"
+    "H": "H"
+    "I": "I"
+    "J": "J"
+    "K": "K"
+    "L": "L"
+    "M": "M"
+    "N": "N"
+    "O": "O"
+    "P": "P"
+    "Q": "Q"
+    "R": "R"
+    "S": "S"
+    "T": "T"
+    "U": "U"
+    "V": "V"
+    "W": "W"
+    "X": "X"
+    "Y": "Y"
+    "Z": "Z"
+    "nothing": "blank"
+
 # ---------------------------------------------------------------------------
-# Preprocessing (used by prepare_data.py)
+# Preprocessing
 # ---------------------------------------------------------------------------
 preprocessing:
   image_size: 224
   min_image_size: 32
   shard_size: 1000
-  random_seed: 33
   split_ratios:
     train: 0.70
     val: 0.15
     test: 0.15
+  random_seed: 33
+  cache_resized: false
 
 # ---------------------------------------------------------------------------
-# Data loader (per environment)
+# DataLoader
 # ---------------------------------------------------------------------------
 dataloader:
   local:
@@ -105,34 +221,28 @@ dataloader:
     prefetch_factor: 2
     persistent_workers: true
     pin_memory: true
-  colab:
-    batch_size: 128
-    num_workers: 2
-    prefetch_factor: 2
-    persistent_workers: true
-    pin_memory: true
-  kaggle:
-    batch_size: 128
-    num_workers: 2
-    prefetch_factor: 2
+  cluster:
+    # H100 node: 32 cores auto-allocated per GPU, 80 GB VRAM
+    batch_size: 256
+    num_workers: 16
+    prefetch_factor: 4
     persistent_workers: true
     pin_memory: true
 
 # ---------------------------------------------------------------------------
-# Training hyperparameters
+# Training
 # ---------------------------------------------------------------------------
 training:
-  num_epochs: 30
+  num_epochs: 50
   learning_rate: 1.0e-3
   weight_decay: 1.0e-4
   grad_clip: 1.0
   grad_accum_steps: 1
-  early_stopping_patience: 7
-  use_amp: true
+  use_amp: true                # BF16/FP16, H100 natively supports both
   use_weighted_sampler: false
   use_class_weights: true
-  scheduler: cosine   # cosine | step | none
-  torch_compile: false
+  scheduler: cosine
+  torch_compile: false         # set true for long production runs (~2 min compile overhead)
 
 # ---------------------------------------------------------------------------
 # Transfer learning
