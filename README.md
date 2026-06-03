@@ -1,42 +1,54 @@
 # ASL Hand Gesture Classification
 
-Multi-source ASL recognition across 37 classes (digits 0-9, letters A-Z, and "nothing").
+Multi-source ASL recognition across 37 classes (digits 1-10, letters A-Z, and "blank").
 Three source datasets are unified into a single pipeline where each dataset maps to one split.
+
+> A more detailed description of the project / repo can be found at [PROJECT.md](PROJECT.md).
 
 ## Repository structure
 
 ```text
 configs/        config.yaml with all hyperparameters and paths
 data/           datasets (see below)
-experiments/    one Jupyter notebook per experiment
+experiments/    model_comparison.ipynb - results analysis
 results/        training logs and plots (gitignored)
 checkpoints/    saved model weights (gitignored)
+slurm/          SLURM job scripts for Pirineus 3 (HPC)
+scripts/        utility scripts (data preparation, weight download, dataset filtering)
 src/
-  config.py       config loader, environment detection
+  config.py       config loader, expands $HOME paths on cluster
   dataset.py      DataLoaders for all three dataset variants
   augmentation.py train and eval transforms
-  model.py        BaselineCNN, DeepCNN, transfer learning wrappers
-  training.py     Trainer class with AMP, early stopping, logging
-  prepare_data.py full data preparation pipeline: unify → validate → split → shard (local)
+  model.py        BaselineCNN, DeepCNN, EfficientNetV2 wrappers
+  training.py     Trainer class with AMP, logging
+  prepare_data.py full local preparation pipeline: merge → validate → split → shard
   utils.py        seeding, visualization, model persistence, evaluation
   eda.ipynb       exploratory data analysis
+  train.py        CLI entry point for SLURM batch jobs
 ```
 
 ## Datasets
 
-There are three variants. Switch between them by changing `dataset_variant` in `configs/config.yaml`.
+| Variant | Directory | Splits | Use case |
+| ------- | --------- | ------ | -------- |
+| `mini` | `data/asl_clean_mini/` | `data/splits/asl_clean_mini/` | Local dev and testing |
+| `shards` | `data/asl_shards/` | `_info.json` per split | Cluster training |
 
-| Variant | Directory | Splits | Use case | Git |
-| ------- | --------- | ------ | -------- | --- |
-| `mini` | `data/asl_clean_mini/` | `data/splits/asl_clean_mini/` | Local dev and testing | Yes |
-| `full` | `data/asl_clean/` | `data/splits/asl_clean/` | Full local training | No |
-| `shards` | `data/asl_shards/` | `_info.json` per split | Cloud training (recommended) | No |
+Set `dataset_variant` in `configs/config.yaml` to switch between variants. See [DATA_DESCRIPTION.md](DATA_DESCRIPTION.md) for full dataset documentation, preprocessing pipeline details, and per-class statistics.
 
-The mini dataset is a small sample committed to the repo. The full dataset and shards are local-only and must be generated from the raw sources using the pipeline below.
+## Local data preparation pipeline
 
-## Local data preparation pipeline (no GPU needed)
+Run once on a local machine (to check everything works) before uploading to the cluster. Requires `data/merged_dataset/` to exist (produced by `scripts/merge_datasets.py`).
 
-Run once on a local machine. The single script handles all steps.
+**Mini dataset** (local dev, fast, small):
+
+```sh
+python -m src.prepare_data --mini 10
+```
+
+Samples 10 images per class from `merged_dataset/` into `data/asl_clean_mini/`, then generates stratified split CSVs in `data/splits/asl_clean_mini/`. Change `10` to any number per class.
+
+**Full pipeline** (produces shards for cluster training):
 
 ```sh
 python -m src.prepare_data
@@ -44,80 +56,166 @@ python -m src.prepare_data
 
 Outputs:
 
-- `data/manifest_raw.csv` — unified image manifest
-- `data/splits/asl_clean/{train,val,test}.csv` — per-split manifests
-- `data/preprocessing_report.json` — validation statistics
-- `data/asl_shards/{train,val,test}/*.tar` — WebDataset shards for cloud training
-
-**Split strategy:** each source dataset is assigned to exactly one split via
-`preprocessing.dataset_splits` in `configs/config.yaml` — no random splitting.
-The default assignment is `combine_asl → train`, `asl_hg_raw → val`, `asl_alphabet → test`.
+- `data/splits/merged/{train,val,test}.csv`: stratified split manifests
+- `data/norm_stats.json`: per-channel mean & std (train set only)
+- `data/preprocessing_report.json`: validation statistics
+- `data/asl_shards/{train,val,test}/*.tar`: WebDataset shards
 
 Optional flags:
 
 ```sh
-python -m src.prepare_data --skip_shards   # stop after writing split CSVs
-python -m src.prepare_data --dry_run       # print stats without writing anything
+python -m src.prepare_data --skip_shards      # stop after CSVs + norm stats
+python -m src.prepare_data --skip_validation  # skip corrupt/size check
+python -m src.prepare_data --dry_run          # print stats without writing anything
 ```
 
-## Cloud training (Colab or Kaggle)
+## Cluster setup (Pirineus 3 - CSUC HPC)
 
-1. Run the local pipeline to produce `data/asl_shards/`.
-2. Upload `data/` (or just `asl_shards/`) to your cloud storage.
-3. Set `dataset_variant: shards` in `configs/config.yaml`.
-4. Update `data_root` in the config for your cloud environment (see comments in config.yaml).
-5. Run the experiment notebook.
+> [!WARNING]
+> This setup is specific for this cluster, other clusters may need a different configuration. This is also true if using Kaggle or Colab. Take into account also that the batch files are also specific to this cluster, specially regarding resource allocation (header).
 
-**Colab:** call `config.mount_drive()` before `load_config()`. Upload `data/` to `MyDrive/asl/` so shards are at `MyDrive/asl/asl_shards/`.
+Large inputs live under `$DATA` (big-file storage); outputs and logs live under `$HOME`:
 
-**Kaggle:** add your uploaded dataset; the expected layout is `/kaggle/input/<slug>/asl_shards/{train,val,test}/`. Update `data_root` in config.yaml with your slug.
-
-## Running an experiment
-
-All experiments use the same boilerplate regardless of which dataset variant is active.
-
-```python
-import sys, pathlib
-ROOT = pathlib.Path('.').resolve().parent
-sys.path.insert(0, str(ROOT / 'src'))
-
-from config import mount_drive, load_config
-from augmentation import build_train_transform, build_eval_transform
-from dataset import build_dataloaders
-from training import Trainer, compute_class_weights
-from utils import set_seed
-
-mount_drive()  # no-op unless on Colab
-cfg = load_config(ROOT / 'configs/config.yaml')
-set_seed(cfg.preprocessing.random_seed, cfg.device)
-
-train_tf = build_train_transform(cfg.preprocessing.image_size)
-eval_tf = build_eval_transform(cfg.preprocessing.image_size)
-
-train_loader, val_loader, test_loader = build_dataloaders(
-    train_transform=train_tf,
-    eval_transform=eval_tf,
-    **cfg.dataloader_kwargs(),
-)
+```text
+$DATA/
+  asl/                 <- this project (upload root directory here)
+  asl_shards/          <- WebDataset tar shards (train/ val/ test/)
+  pretrained_weights/  <- torchvision weight cache (flat *.pth files)
+$HOME/
+  results/             <- training outputs (created automatically)
+  checkpoints/         <- saved checkpoints (created automatically)
+  LOGS/                <- SLURM stdout/stderr logs
 ```
 
-`cfg.dataloader_kwargs()` handles all dataset variant logic. The same call works for mini, full, and shards - just change `dataset_variant` in config.yaml.
+### One-time setup
 
-For class-weighted loss:
+**1. Download pretrained weights locally** (needs internet access):
 
-```python
-class_weights = compute_class_weights(cfg.class_weight_source, num_classes)
+> [!TIP]
+> This specific cluster does not have internet access, therefore weights have to be downloaded beforehand. If using Kaggle or Colab, this step can be skipped.
+
+```bash
+python scripts/download_weights.py --out pretrained_weights/
 ```
 
-## Configuration reference
+**2. Upload to the cluster** using the file browser. Three things go under `$DATA/`:
 
-All settings are in `configs/config.yaml`. The most commonly changed ones:
+| Local path | Destination on cluster |
+| ---------- | ---------------------- |
+| Project root (all files) | `$DATA/asl/` |
+| `pretrained_weights/` | `$DATA/pretrained_weights/` |
+| `data/asl_shards/` | `$DATA/asl_shards/` |
 
-- `dataset_variant` - which dataset to use (`mini` / `full` / `shards`)
-- `training.num_epochs` - how many epochs to train
-- `training.learning_rate` - initial learning rate
-- `dataloader.local.batch_size` - batch size for local runs
+**3. Install extra packages** on the cluster:
 
-## Notes
+```bash
+module load conda && conda activate (env-name)
+pip install -r $DATA/asl/requirements.txt
+```
 
-See `note.md` for open issues and things to try in future experiments.
+**4. Create the logs directory:**
+
+```bash
+mkdir -p $HOME/LOGS
+```
+
+## Running experiments
+
+All commands below are run **from `$DATA/asl/` on the cluster**.
+
+```bash
+# Submit all jobs at once
+bash slurm/run_all.sh
+
+# Or individually:
+sbatch slurm/train_baseline.sh
+sbatch slurm/train_deeper.sh
+sbatch slurm/train_regularization.sh
+sbatch slurm/train_transfer_array.sh   # all backbones in parallel
+
+# Monitor
+squeue -u $USER
+tail -f $HOME/LOGS/<JOBID>.out
+```
+
+### train.py CLI reference
+
+`src/train.py` is the entry point each SLURM job calls. It builds the model and
+data loaders, runs the training loop (two-phase for transfer models), then
+evaluates on the test split and writes results/checkpoints.
+
+```text
+python src/train.py --model MODEL --exp-name NAME [options]
+
+  --model        baseline | deep | deep_regularized | deep_batchnorm |
+                 resnet18 | resnet50 | mobilenet_v3_small | efficientnet_b0
+  --exp-name     experiment name (results/ and checkpoints/ subdirs)
+  --config       path to config YAML (default: configs/config.yaml)
+  --epochs       override num_epochs
+  --lr           override learning_rate
+  --batch-size   override batch_size
+  --freeze-epochs   frozen backbone epochs (transfer only, default: 5)
+  --finetune-epochs fine-tune phase epochs (default: same as --epochs)
+  --no-finetune  skip fine-tuning phase
+  --dropout      classification head dropout (default: 0.3)
+```
+
+## Real-time inference
+
+> [!NOTE]
+> I deliberately tracked the checkpoint of the MobileNet so you can try it out.
+
+Run live ASL recognition from a webcam using a trained checkpoint:
+
+```bash
+python -m src.realtime_inference \
+  --checkpoint checkpoints/transfer_mobilenet_v3_small/best.pt \
+  --model mobilenet_v3_small \
+  --camera 0 \ # Sometimes camera 0 does not work, if that's the case try 1
+  --top-k 3 \
+  --device cpu
+```
+
+Key options:
+
+```text
+--checkpoint   path to best.pt checkpoint (relative to current path)
+--model        baseline | deep | deep_regularized | deep_batchnorm |
+               resnet18 | resnet50 | mobilenet_v3_small | efficientnet_b0
+--camera       camera index (default: 0)
+--top-k        number of top predictions to display (default: 3)
+--device       cpu | cuda (default: cpu)
+```
+
+Controls: press `s` to save a screenshot, `q` to quit.
+
+## Retrieving results
+
+```bash
+rsync -avP -e 'ssh -p 2122' USER@pirineus3.csuc.cat:~/results/     results/
+rsync -avP -e 'ssh -p 2122' USER@pirineus3.csuc.cat:~/checkpoints/ checkpoints/
+```
+
+Then open `experiments/model_comparison.ipynb` to analyse results.
+
+## Kaggle / Colab
+
+The above workflow will not work in these environments, the initialization scripts are specially design for clusters that uses SLURM.
+
+If the project were runned on Colab / Kaggle, notebooks emulating the behaviour of the batch scripts (`*.sh`) shall be created. Nonetheless, since the project was created from a modular approach, this can be easily accomplished by importing the different modules into the notebook.
+
+If that were the case, the following requirements should be met:
+
+1. **Dataset**: upload the WebDataset shards (`asl_shards`) or the small `asl_clean_mini` sample, and set `dataset_variant` in `configs/config.yaml` accordingly (`shards` or `mini`).
+2. **Pretrained weights**: Colab and Kaggle have internet access, so `scripts/download_weights.py` is not needed, torchvision downloads the backbone weights automatically on first use.
+3. **Paths**: point `paths.local.data_root` at wherever the data is mounted (e.g. `/kaggle/input/...`), or override it at runtime with the `ASL_DATA_ROOT` / `ASL_SHARDS_DIR` environment variables.
+4. **Training**: reproduce a `slurm/*.sh` job inside a notebook cell by importing the modules directly instead of calling `src/train.py`:
+
+   ```python
+   from src.config import load_config
+   from src.dataset import build_dataloaders
+   from src.model import get_model
+   from src.training import Trainer
+   ```
+
+   then build the loaders, model and trainer the same way `src/train.py` does.
