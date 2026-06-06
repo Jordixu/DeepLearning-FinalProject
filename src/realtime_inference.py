@@ -189,8 +189,8 @@ Examples:
   python -m src.realtime_inference --checkpoint checkpoints/exp/best.pt --camera 1
         """,
     )
-    parser.add_argument("--checkpoint", required=True,
-                        help="Path to a best.pt checkpoint (saved model state_dict)")
+    parser.add_argument("--checkpoint", required=False, type=str,
+                        help="Path to a best.pt checkpoint (saved model state_dict)", default="checkpoints/transfer_mobilenet_v3_small/best.pt")
     parser.add_argument("--model", default="mobilenet_v3_small",
                         choices=[
                             "baseline", "deep", "deep_regularized",
@@ -198,8 +198,8 @@ Examples:
                             "resnet18", "resnet50", "mobilenet_v3_small", "efficientnet_b0",
                         ],
                         help="Model architecture, must match the checkpoint (default: mobilenet_v3_small)")
-    parser.add_argument("--camera", type=int, default=0,
-                        help="Camera device index (default: 0)")
+    parser.add_argument("--camera", type=int, default=1,
+                        help="Camera device index (default: 1)")
     parser.add_argument("--top-k", "--top_k", type=int, default=3,
                         help="Number of top predictions shown in the overlay (default: 3)")
     parser.add_argument("--device", default=None,

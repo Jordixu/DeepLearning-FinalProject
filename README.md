@@ -10,7 +10,7 @@ Three source datasets are unified into a single pipeline where each dataset maps
 ```text
 configs/        config.yaml with all hyperparameters and paths
 data/           datasets (see below)
-experiments/    model_comparison.ipynb - results analysis
+notebooks/    model_comparison.ipynb - results analysis
 results/        training logs and plots (gitignored)
 checkpoints/    saved model weights (gitignored)
 slurm/          SLURM job scripts for Pirineus 3 (HPC)

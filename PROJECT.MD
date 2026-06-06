@@ -65,7 +65,7 @@ DeepLearning-FinalProject/
 │   ├── train_transfer_array.sh
 │   ├── _copy_shards.sh
 │   └── _setup_weights.sh
-├── experiments/
+├── notebooks/
 │   └── model_comparison.ipynb             # Cross-model results analysis
 ├── results/
 │   ├── baseline/                          # BaselineCNN outputs
