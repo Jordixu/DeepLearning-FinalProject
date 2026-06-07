@@ -621,3 +621,4 @@ opencv-python>=4.8.0
 ipykernel>=6.0.0
 ipywidgets>=8.0.0
 ```
+
