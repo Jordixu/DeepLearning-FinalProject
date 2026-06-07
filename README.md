@@ -3,7 +3,7 @@
 Multi-source ASL recognition across 37 classes (digits 1-10, letters A-Z, and "blank").
 Three source datasets are unified into a single pipeline where each dataset maps to one split.
 
-> A more detailed description of the project / repo can be found at [PROJECT.md](PROJECT.md).
+> A more detailed description of the project / repo can be found at [PROJECT.MD](PROJECT.MD).
 
 ## Repository structure
 
